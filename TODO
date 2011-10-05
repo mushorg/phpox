@@ -1,0 +1,5 @@
+- Find a solution for bots with multiple irc servers.
+- Perl sandbox?
+- Improve replacement for all functions executing shell commands.
+- Overwrite echo calls to separate script output from sandbox output.
+- Flag script output and socket output differently 
