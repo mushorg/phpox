@@ -1,5 +1,6 @@
 - Find a solution for bots with multiple irc servers.
-- Perl sandbox?
+- (Perl sandbox?)
+- Fix the sqlite db connection (close it!)
 - Improve replacement for all functions executing shell commands.
-- Overwrite echo calls to separate script output from sandbox output.
-- Flag script output and socket output differently 
+- Overwrite echo calls to separate script output from sandbox output (replace the echo function)
+- Flag script output and socket output differently
