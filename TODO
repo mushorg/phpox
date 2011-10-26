@@ -1,6 +1,9 @@
+- Replace shell exec command replacement file with a single one
+- Improve replacement for all functions executing shell commands
+- Finish the brute force stuff in the new listener
+- shell command parsing
+
 - Find a solution for bots with multiple irc servers.
-- (Perl sandbox?)
 - Fix the sqlite db connection (close it!)
-- Improve replacement for all functions executing shell commands.
 - Overwrite echo calls to separate script output from sandbox output (replace the echo function)
 - Flag script output and socket output differently
