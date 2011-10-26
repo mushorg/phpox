@@ -12,7 +12,10 @@ import analysis
 import log_sqlite
 from lang import lang_detection
 
+import getopt
+
 VERSION = '1.0'
+DEBUG_LEVEL = 0
 
 def killer(proc, secs):
     time.sleep(secs)
@@ -40,6 +43,11 @@ def detect_language(script):
 
 def sandbox(script, secs):
     language = detect_language(script)
+    if DEBUG_LEVEL > 0:
+        stderr_opt = None
+    else:
+        stderr_opt = subprocess.PIPE
+
     if language == "php":
         php_tag_check(script)
     try:
@@ -54,7 +62,7 @@ def sandbox(script, secs):
                 shell = False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stderr=stderr_opt,
                 )
     except Exception as e:
         print "Error executing the sandbox:", e.message
@@ -80,8 +88,14 @@ def sandbox(script, secs):
 if __name__ == '__main__':
     print "\nPHP sandbox version: %s\n" % VERSION
     secs = 3
+
+    opts = getopt.getopt(sys.argv[1:], "v", [])
+    for i in opts[0]:
+        if i[0] == '-v' :
+	    DEBUG_LEVEL += 1
+
     try:
-        sandbox(sys.argv[1], secs)
+        sandbox(opts[1][0], secs)
     except(IndexError):
         list = os.listdir("samples/get")
         random.shuffle(list)
@@ -89,3 +103,4 @@ if __name__ == '__main__':
             print sample
             sandbox("samples/get/" + sample, secs)
             raw_input("Enter to continue")
+
