@@ -3,6 +3,7 @@
 import random
 
 import apd_functions
+from replacement import shell_sandbox
 
 def output(s):
     print s
@@ -10,6 +11,7 @@ def output(s):
 FUNCTIONS = apd_functions.FUNCTIONS
 
 output("<?php\nif(!extension_loaded('apd')) {\n\tdl('apd.so');\n}\n")
+output( shell_sandbox.shell_sandbox() );
 int = 0
 for function, return_val in FUNCTIONS.items():
     parts = function.split(";")
