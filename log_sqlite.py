@@ -16,12 +16,11 @@ class LogSQLite(object):
                 irc_notice TEXT, irc_privmsg TEXT)""")
         self.connection.commit()
         self.cursor.close()
-        self.connection.close()
         
     def insert(self, botnet):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
-                INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
                 (None, botnet.analysis_date, botnet.file_md5, botnet.file_name, 
                  botnet.irc_addr, botnet.irc_server_pwd, botnet.irc_nick,
                  botnet.irc_user, botnet.irc_mode, ', '.join(botnet.irc_channel),
