@@ -25,15 +25,15 @@ def killer(proc, secs):
         pass
 
 def php_tag_check(script):
-    file = open(script, "r+")
-    file_content = file.read()
+    check_file = open(script, "r+")
+    file_content = check_file.read()
     if not "<?" in file_content:
         file_content = "<?php" + file_content
         raw_input("tag fixed!")
     if not "?>" in file_content:
         file_content = file_content + "?>"
-    file.write(file_content)
-    file.close()
+    check_file.write(file_content)
+    check_file.close()
     return script
 
 def detect_language(script):
