@@ -92,14 +92,14 @@ if __name__ == '__main__':
     opts = getopt.getopt(sys.argv[1:], "v", [])
     for i in opts[0]:
         if i[0] == '-v' :
-	    DEBUG_LEVEL += 1
+            DEBUG_LEVEL += 1
 
     try:
         sandbox(opts[1][0], secs)
     except(IndexError):
-        list = os.listdir("samples/get")
-        random.shuffle(list)
-        for sample in list:
+        sample_list = os.listdir("samples/get")
+        random.shuffle(sample_list)
+        for sample in sample_list:
             print sample
             sandbox("samples/get/" + sample, secs)
             raw_input("Enter to continue")
