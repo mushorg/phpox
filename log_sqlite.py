@@ -11,7 +11,7 @@ class LogSQLite(object):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
                 CREATE TABLE IF NOT EXISTS 
-                events(id INTEGER PRIMARY KEY, 
+                botnets(id INTEGER PRIMARY KEY, 
                 analysis_date TEXT, 
                 file_md5 TEXT, 
                 file_name TEXT, 
@@ -33,7 +33,7 @@ class LogSQLite(object):
     def insert(self, botnet):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
-                INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                INSERT INTO botnets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
                 (None, botnet.analysis_date, botnet.file_md5, botnet.file_name, 
                  botnet.irc_addr, botnet.irc_server_pwd, botnet.irc_nick,
                  botnet.irc_user, botnet.irc_mode, ', '.join(botnet.irc_channel),
