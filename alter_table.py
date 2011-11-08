@@ -8,12 +8,11 @@ class LogSQLite(object):
         
     def alter(self):
         self.cursor = self.connection.cursor()
-        self.cursor.execute("""
-                ALTER TABLE events ADD irc_nickserv TEXT,
-                irc_notice TEXT, irc_privmsg TEXT""")
+        self.cursor.execute("""ALTER TABLE events ADD COLUMN 'irc_nickserv TEXT'""")
+        self.cursor.execute("""ALTER TABLE events ADD COLUMN 'irc_notice TEXT'""")
+        self.cursor.execute("""ALTER TABLE events ADD COLUMN 'irc_privmsg TEXT'""")
         self.connection.commit()
         self.cursor.close()
         self.connection.close()
         
 i = LogSQLite()
-i.alter()
