@@ -1,5 +1,4 @@
 import SocketServer
-import socket
 import threading
 import time
 import brute
@@ -33,11 +32,10 @@ class EchoRequestHandler(SocketServer.BaseRequestHandler):
                 time.sleep(1)
         return
 
-if __name__ == '__main__':
-    address = ('localhost', 1234) # let the kernel give us a port
-    server = SocketServer.TCPServer(address, EchoRequestHandler)
-    ip, port = server.server_address # find out what port we were given
-
-    t = threading.Thread(target=server.serve_forever)
-    t.setDaemon(False)
-    t.start()
+class FakeListener(object):
+    
+    def main(self):
+        address = ('localhost', 1234) # let the kernel give us a port
+        server = SocketServer.TCPServer(address, EchoRequestHandler)
+        ip, port = server.server_address # find out what port we were given
+        return server

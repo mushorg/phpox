@@ -11,6 +11,7 @@ from functools import partial
 import analysis
 import log_sqlite
 from lang import lang_detection
+import listener
 
 import getopt
 
@@ -51,12 +52,16 @@ def sandbox(script, secs):
     if language == "php":
         php_tag_check(script)
     try:
-        proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
+        fake_listener = listener.FakeListener()
+        server = fake_listener.main()
+        t = threading.Thread(target=server.serve_forever)
+        t.setDaemon(False)
+        t.start()
+        #proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e.message
     else:
         print "Listener running..."
-    #script = php_tag_check(script)
     try:
         proc_sandbox = subprocess.Popen(["php", "apd_sandbox.php", script], 
                 shell = False,
@@ -73,10 +78,10 @@ def sandbox(script, secs):
         threading.Thread(target=partial(killer, proc_sandbox, secs)).start()
         stdout_value = proc_sandbox.communicate()[0]
     except Exception as e:
-        proc_listener.kill()
+        #proc_listener.kill()
         print "Communication error:", e.message
     else:
-        proc_listener.kill()
+        #proc_listener.kill()
         analyzer = analysis.DataAnalysis(script)
         botnet = analyzer.analyze(stdout_value)
         logger = log_sqlite.LogSQLite()
