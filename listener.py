@@ -25,7 +25,10 @@ class RequestHandler(SocketServer.BaseRequestHandler):
                 for pw in pw_list:
                     msg = ":owner!name@address PRIVMSG " + channel + " :.user " + pw
                     print "message", repr(msg)
-                    self.request.send(msg)
+                    try:
+                        self.request.send(msg)
+                    except Exception as e:
+                        print "exception message:" + e.message                                            
                     time.sleep(0.1)
                     data = self.request.recv(10)
                     print data
