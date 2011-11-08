@@ -53,9 +53,9 @@ def sandbox(script, secs):
         php_tag_check(script)
     try:
         fake_listener = listener.FakeListener()
-        server = fake_listener.main()
+        server = fake_listener.main(script)
         t = threading.Thread(target=server.serve_forever)
-        t.setDaemon(False)
+        t.setDaemon(True)
         t.start()
         #proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
     except Exception as e:
@@ -92,7 +92,7 @@ def sandbox(script, secs):
     
 if __name__ == '__main__':
     print "\nPHP sandbox version: %s\n" % VERSION
-    secs = 3
+    secs = 10
 
     opts = getopt.getopt(sys.argv[1:], "v", [])
     for i in opts[0]:

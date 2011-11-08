@@ -1,15 +1,18 @@
 import SocketServer
-import threading
 import time
 import brute
 
-class EchoRequestHandler(SocketServer.BaseRequestHandler):
+class FakeServer(SocketServer.TCPServer):
+    def __init__(self, server_address, RequestHandlerClass, filename):
+        SocketServer.TCPServer.__init__(self, server_address, RequestHandlerClass)
+        self.filename = filename
+        self.timeout = 2
+
+class RequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        
-        sample_string = brute.open_sample("samples/get/204df484ad6d09f5bb03b8152216e6c0")
+        sample_string = brute.open_sample(self.server.filename)
         pw_list = brute.find_strings(sample_string)
-        # Echo the back to the client
         self.request.send(":ircserver NOTICE * :*** SomeString \n")
         self.request.send(":ircserver 001 nick :SomeString \n")
         self.request.send(":ircserver 004 nick SomeString \n")
@@ -18,24 +21,24 @@ class EchoRequestHandler(SocketServer.BaseRequestHandler):
             print data
             if "JOIN" in data:
                 channel = "#" + data.partition("#")[2].split(" ")[0].strip()
-                print channel
+                print "channel", repr(channel)
                 for pw in pw_list:
-                    print repr(pw)
                     msg = ":owner!name@address PRIVMSG " + channel + " :.user " + pw
-                    print repr(msg)
+                    print "message", repr(msg)
                     self.request.send(msg)
-                    time.sleep(1)
-                    if pw == "aank1234":
+                    time.sleep(0.1)
+                    data = self.request.recv(10)
+                    print data
+                    if pw == "planetworkteams":
                         break
     
             else:
-                time.sleep(1)
+                time.sleep(3)
         return
 
 class FakeListener(object):
     
-    def main(self):
-        address = ('localhost', 1234) # let the kernel give us a port
-        server = SocketServer.TCPServer(address, EchoRequestHandler)
-        ip, port = server.server_address # find out what port we were given
+    def main(self, filename):
+        address = ('localhost', 1234)
+        server = FakeServer(address, RequestHandler, filename)
         return server
