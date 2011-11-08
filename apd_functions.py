@@ -1,13 +1,14 @@
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
-from replacement import fgets
+from replacement import fgets, php_uname
+
 
 FUNCTIONS = {
              "disk_free_space;" : "\treturn '%s';" % "36698988544", 
-             "disk_total_space;" : "\treturn '%s';" % "51221590016", 
              "diskfreespace;" : "\treturn '%s';" % "36698988544", 
+             "disk_total_space;" : "\treturn '%s';" % "51221590016", 
              "exec;$cmd;&$ret;" : execute.call(),
              "fgets;$handle;$length;" : fgets.call(),
-             "function_exists;" : "\treturn true;",
+             #"function_exists;" : "\treturn true;",
              "fsockopen;$hostname;$port;$errno;$errstr;$timeout;" : fsockopen.call(), 
              "getcwd;" : "\treturn '%s';" % "/var/www",
              "getenv;$varname;" : getenv.call(),
@@ -17,7 +18,7 @@ FUNCTIONS = {
              "ini_get;$varname;" : ini_get.call(), 
              "is_writable;" : "\treturn true;", 
              "is_callable;" : "\treturn true;",
-             "php_uname;" : "\treturn '%s';" % "Linux Server 2.6.38-11-generic #49-Ubuntu SMP Mon Aug 29 20:47:58 UTC 2011 i686", 
+             "php_uname;" : php_uname.call(), 
              "passthru;$cmd;&$ret;" : passthru.call(),
              "popen;$cmd;" : popen.call(),
              "shell_exec;$cmd;" : shell_exec.call(),
