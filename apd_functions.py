@@ -1,11 +1,13 @@
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
 from replacement import fgets, php_uname
+import random
 
+freespace = str(random.randint(53687091200, 322122547200))
 
 FUNCTIONS = {
-             "disk_free_space;" : "\treturn '%s';" % "36698988544", 
-             "diskfreespace;" : "\treturn '%s';" % "36698988544", 
-             "disk_total_space;" : "\treturn '%s';" % "51221590016", 
+             "disk_free_space;" : "\treturn '%s';" % freespace, 
+             "diskfreespace;" : "\treturn '%s';" % str(random.randint(75161927680, 397284474880)), 
+             "disk_total_space;" : "\treturn '%s';" % freespace, 
              "exec;$cmd;&$ret;" : execute.call(),
              "fgets;$handle;$length;" : fgets.call(),
              #"function_exists;" : "\treturn true;",
