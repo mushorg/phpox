@@ -1,9 +1,19 @@
-- Replace shell exec command replacement file with a single one
-- Improve replacement for all functions executing shell commands
-- Finish the brute force stuff in the new listener
-- shell command parsing
+Sandbox Coding
+- Louis shell command parsing
+- Louis Multiple IRC server (in progress)
+- Alice Flag script output and socket output differently
+- Lukas, Alice, Julia Python Listener
+- Alice Disk Free Space stuff
+Log parameters for function_exists calls
+- Momo Make php_uname more dynamic
 
-- Find a solution for bots with multiple irc servers.
-- Fix the sqlite db connection (close it!)
-- Overwrite echo calls to separate script output from sandbox output (replace the echo function)
-- Flag script output and socket output differently
+Visualization Coding
+- Leo, Felisa Use PyChart to draw graphs
+- Leo separate bar and line graph
+- Frank, Syuan put CSS code into style.css
+- Syan Upload images folde
+- Lukas set up the webserver and link the images
+
+Various
+- Syuan Saturday Presentation
+
