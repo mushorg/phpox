@@ -7,14 +7,16 @@ date = datetime.now().strftime("%a %b %d %H:%M:%S UTC %Y")
 str1 = ["#41", "#42", "#43", "#44", "#45", "#46", "#47", "#48", "#49"]
 version_name = ["Fedora", "Redhat", "CenOs", "FreeBSD", "Mandriva", "Debian", "Gentoo", "SUSE"]
 kernel_version = ["i386", "i686"]
+operating_system = ["GNU/Linux", "GNU/Unix"]
 def call():
     hostname = choice(hosts)
     number = choice(version_numbers)
     str2 = choice(str1)
     name = choice(version_name)
     kernel = choice(kernel_version)
+    operating = choice(operating_system)
     ret = """
-    \treturn 'Linux {0} {1}-generic {2}-{3} SMP {4} {5}';
-    """.format(hostname, number, str2, name, date, kernel)
+    \treturn 'Linux {0} {1}-generic {2}-{3} SMP {4} {5} {6}';
+    """.format(hostname, number, str2, name, date, kernel, operating)
     return ret
 print call()
