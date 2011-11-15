@@ -1,13 +1,17 @@
 from random import choice
-list1 = ["qazwwqw", "qwdewqewqxsdw", "sdadwd", "asdsdwqd", "qwdxswd",
-         "asdwq", "qwedqwde", "awdqwd", "qwdwd","wewefdef"]
-list2 = ["sdsd", "sdsd", "asdsdwqd", "qwdxswd",
-         "asdwq", "qwedqwde", "awdqwd", "qwdwd","wewefdef"]
+from datetime import datetime
+
+# TODO replace random string with actual content
+hosts = ["Linux", "Server", "WebServer", ]
+version_numbers = ["2.6.38-2",]
+
+date = datetime.now().strftime("%a %b %d %H:%M:%S UTC %Y")
+
 def call():
-    hostname = choice(list1)
-    number = choice(list2)
+    hostname = choice(hosts)
+    number = choice(version_numbers)
     ret = """
-    \treturn 'Linux %s 2.6.38-%s-generic #49-Ubuntu SMP Mon Aug 29 20:47:58 UTC 2011 i686';
-    """ % (hostname, number)
+    \treturn 'Linux {0} {1}-generic #49-Ubuntu SMP {2} i686';
+    """.format(hostname, number, date)
     return ret
 #print call()
