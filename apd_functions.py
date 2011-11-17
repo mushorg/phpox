@@ -5,9 +5,9 @@ import random
 freespace = str(random.randint(53687091200, 322122547200))
 
 FUNCTIONS = {
-             "disk_free_space;" : "\treturn '%s';" % freespace, 
-             "diskfreespace;" : "\treturn '%s';" % str(random.randint(75161927680, 397284474880)), 
-             "disk_total_space;" : "\treturn '%s';" % freespace, 
+             "disk_free_space;" : "\treturn '%s';" % freespace,
+             "diskfreespace;" : "\treturn '%s';" % freespace,
+             "disk_total_space;" : "\treturn '%s';" % str(random.randint(75161927680, 397284474880)),
              "exec;$cmd;&$ret;" : execute.call(),
              "fgets;$handle;$length;" : fgets.call(),
              #"function_exists;" : "\treturn true;",
