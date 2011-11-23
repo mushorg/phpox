@@ -9,7 +9,7 @@ hosts = ["Linux", "Server", "WebServer", "FTP", "SMTP", "POP3", "Unix" ]
 version_numbers = ["3.0.0-14", "2.6.24-29", "2.6.32-41", "2.6.35-30", "2.6.38-7", "3.1.0-2"]
 str1 = ["#41", "#42", "#43", "#44", "#45", "#46", "#47", "#48", "#49"]
 version_name = ["Fedora", "Redhat", "CentOs", "FreeBSD", "Mandriva", "Debian", "Gentoo", "SUSE", "Ubuntu"]
-print time.tzname
+#print time.tzname
 time_zone = choice(time.tzname)
 date = datetime.now().strftime("%a %b %d %H:%M:%S {0} %Y".format(time_zone))
 kernel_version = ["i386", "i686"]
