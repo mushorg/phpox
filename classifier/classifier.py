@@ -14,16 +14,16 @@ if __name__ == '__main__':
     
     #Training Set for phpbot Classifier
     training_phpbot_list = []
-    list_phpbot = os.listdir(trainpath + "/phpbot/")
+    list_phpbot = os.listdir(trainpath + "phpbot/")
     for sample in list_phpbot:
-        gettext = docsimlarity.fileio(trainpath + "/phpbot/"+sample)
+        gettext = docsimlarity.fileio(trainpath + "phpbot/"+sample)
         gettext = docsimlarity.textread(gettext)
         training_phpbot_list.append(docsimlarity.tf_text(gettext))
         
     training_phpecho_list = []
-    list_phpbot = os.listdir(trainpath + "/phpecho/")
+    list_phpbot = os.listdir(trainpath + "phpecho/")
     for sample in list_phpbot:
-        gettext = docsimlarity.fileio(trainpath + "/phpecho/"+sample)
+        gettext = docsimlarity.fileio(trainpath + "phpecho/"+sample)
         gettext = docsimlarity.textread(gettext)
         training_phpecho_list.append(docsimlarity.tf_text(gettext))
         
@@ -35,9 +35,9 @@ if __name__ == '__main__':
     #    training_phpdownloading_list.append(docsimlarity.tf_text(gettext))
         
     training_phpshell_list = []
-    list_phpbot = os.listdir(trainpath + "/phpshell/")
+    list_phpbot = os.listdir(trainpath + "phpshell/")
     for sample in list_phpbot:
-        gettext = docsimlarity.fileio(trainpath + "/phpshell/"+sample)
+        gettext = docsimlarity.fileio(trainpath + "phpshell/"+sample)
         gettext = docsimlarity.textread(gettext)
         training_phpshell_list.append(docsimlarity.tf_text(gettext))
     
@@ -67,10 +67,10 @@ if __name__ == '__main__':
         equality = docsimlarity.comp_descriptors (request_list, document)
         eqularity_phpshell.append(equality)
     
-    print "phpbot="+str(docsimlarity.getMedian(eqularity_phpbot))
-    print "phpecho="+str(docsimlarity.getMedian(eqularity_phpecho))
+    print "phpbot="+str(docsimlarity.getMedian(eqularity_phpbot))+" Max="+str(max(eqularity_phpbot))
+    print "phpecho="+str(docsimlarity.getMedian(eqularity_phpecho))+" Max="+str(max(eqularity_phpecho))
     #print docsimlarity.getMedian(eqularity_phpdownloading)
-    print "phpshell="+str(docsimlarity.getMedian(eqularity_phpshell))
+    print "phpshell="+str(docsimlarity.getMedian(eqularity_phpshell))+" Max="+str(max(eqularity_phpshell))
         
     
     
