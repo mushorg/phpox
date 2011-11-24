@@ -5,9 +5,3 @@ The goal of file classifier is to classify malicious scripts into:
 (4)phpshell: Hackers can remotely control victims using phpshell
 (5)phpphishing: (not sure) Building up phishing site
 
-Step 1: Extracting features:
-	(1) count structure functions
-	(2) count of php_function matching
-	(3) count variables $
-	(4) file size
-	(4) count of html tag
