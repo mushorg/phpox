@@ -52,12 +52,12 @@ def sandbox(script, secs):
     if language == "php":
         php_tag_check(script)
     try:
-        fake_listener = listener.FakeListener()
+        """fake_listener = listener.FakeListener()
         server = fake_listener.main(script)
         t = threading.Thread(target=server.serve_forever)
         t.setDaemon(True)
-        t.start()
-        #proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
+        t.start()"""
+        proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:
@@ -78,10 +78,10 @@ def sandbox(script, secs):
         threading.Thread(target=partial(killer, proc_sandbox, secs)).start()
         stdout_value = proc_sandbox.communicate()[0]
     except Exception as e:
-        #proc_listener.kill()
+        proc_listener.kill()
         print "Communication error:", e.message
     else:
-        #proc_listener.kill()
+        proc_listener.kill()
         analyzer = analysis.DataAnalysis(script)
         botnet = analyzer.analyze(stdout_value)
         logger = log_sqlite.LogSQLite()
