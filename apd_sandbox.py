@@ -59,7 +59,7 @@ def sandbox(script, secs):
         t.start()
         #proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
     except Exception as e:
-        print "Error running the socket listener:", e.message
+        print "Error running the socket listener:", e
     else:
         print "Listener running..."
     try:
