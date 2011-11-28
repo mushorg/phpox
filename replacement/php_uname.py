@@ -28,5 +28,5 @@ def call():
     \treturn 'Linux {0} {1} {2}-{3} SMP {4} {5} {6}';
     """.format(hostname, number, version_choice,name, date, kernel, operating)
     return ret
-print call()
+#print call()
 
