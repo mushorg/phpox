@@ -69,8 +69,12 @@ def comp_descriptors (document1, document2):
         if document2.has_key(item):
             similar_descriptors += 1
     # calculate equality
-    equality = float(similar_descriptors) / float ((math.sqrt(items_document1) * math.sqrt(items_document2)))
-    return equality
+    try:
+        equality = float(similar_descriptors) / float ((math.sqrt(items_document1) * math.sqrt(items_document2)))
+        return equality
+    except ZeroDivisionError as e:
+        print "float division by zero"
+        return 0
     
 def document_rank(request, document_list, order):
     "ranks the given documents according to the equality of their descriptors with the request"
