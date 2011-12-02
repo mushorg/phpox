@@ -1,8 +1,6 @@
-def call():
-    extension_loaded = 'apd'
-    ret = bool(extension_loaded)
-    if ret == 'true':
-        return 'No Installed'
-    else:
-        return 'No newly version'
-#print call()
+def call(): 
+    function = """ \tif ($name == "apd") 
+    \t{return FALSE;} 
+    \telse \t{ return TRUE;}""" 
+    return function 
+print call()
