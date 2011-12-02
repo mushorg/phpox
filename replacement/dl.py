@@ -1,8 +1,8 @@
 import extension_loaded
 def call():
-    ret = bool(extension_loaded.call())
-    if ret == 'No Installed':
-        dl('apd.so')
+    if extension_loaded.call == True:
+        function = """dl('apd.so');"""
+        return 'False'
     else:
-        return 'No newly version'
-#print call()
+        return 'True'    
+print call()
