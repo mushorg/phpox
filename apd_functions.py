@@ -1,5 +1,5 @@
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
-from replacement import fgets, php_uname
+from replacement import fgets, php_uname, extension_loaded, dl
 import random
 
 freespace = str(random.randint(53687091200, 322122547200))
@@ -21,6 +21,8 @@ FUNCTIONS = {
              "is_writable;" : "\treturn true;", 
              "is_callable;" : "\treturn true;",
              "php_uname;" : php_uname.call(), 
+             "extension_loaded;" : extension_loaded.call(),
+             "dl;" : dl.call(),
              "passthru;$cmd;&$ret;" : passthru.call(),
              "popen;$cmd;" : popen.call(),
              "shell_exec;$cmd;" : shell_exec.call(),
