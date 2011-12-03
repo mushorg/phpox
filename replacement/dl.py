@@ -1,8 +1,9 @@
 import extension_loaded
 def call():
-    if extension_loaded.call == True:
-        function = """dl('apd.so');"""
-        return 'False'
-    else:
-        return 'True'    
+    function = """ if (!extension_loaded('apd')) {
+        \t{return 'NO Newly Version;};
+        \t} else {
+           \t dl('apd.so');
+        \t{return FALSE;}}""" 
+    return function    
 print call()
