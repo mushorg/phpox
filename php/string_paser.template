@@ -1,0 +1,147 @@
+function $simple_code_parser($$src_file){
+	#TODO fix the situation: $$a = "host1"; $$b="host2"; $$hosts=[$$a,$$b];
+	#BUG: $$a = file("a")
+
+	$$array_stack = 0;
+	$$string_index_tmp = "";
+	$$state = 0;	
+	$$output = array();
+	$$bracket_stack_count = 0;
+	$$bracket_stack = array();
+
+	$$state = 0;
+	#target: parse all strings
+	$$lines = join( file($$src_file), "");
+	$$tokens = token_get_all($$lines);
+
+	foreach($$tokens as $$token){
+		#print_r($$token);
+		if( is_int($$token[0])){
+			print token_name($$token[0]) . "\n";
+			switch($$token[0]){
+				case T_ARRAY:
+					$$array_stack ++;
+					$$state = 4;
+					break;
+				case T_DOUBLE_ARROW:
+					print "=> $$state" . "\n";
+					if($$state == 5){
+						$$state = 6;
+						print $$string_index_tmp . "\n";
+						$$item = array("$$string_index_tmp" => 'K');
+						#print_r($$item);
+						array_push($$output, $$item);
+						$$string_index_tmp = "";
+					#}elseif($$state == 4){
+					#	$$state = 6;
+					}
+					break;
+				case T_CONSTANT_ENCAPSED_STRING:
+					print "state == $$state\n";
+					if( $$state == 0){
+						$$item = array("$$token[1]" => 0);
+						#print_r($$item);
+						array_push($$output, $$item);
+					}elseif( $$state == 1){
+						$$item = array("$$token[1]" => 'K');
+						#print_r($$item);
+						array_push($$output, $$item);
+						$$state = 3;
+					}elseif( $$state == 2){
+						$$item = array("$$token[1]" => 'N');
+						#print_r($$item);
+						array_push($$output, $$item);
+					}elseif( $$state == 3){
+						$$item = array("$$token[1]" => 'A');
+						print __LINE__ . "\n";
+						#print_r($$item);
+						array_push($$output, $$item);
+					}elseif( $$state == 4){
+						#the string may be the index key....
+						$$state = 5;
+						#print "enter state 5\n";
+						$$string_index_tmp = $$token[1];
+						#print $$token[1] . "\n";
+					}elseif( $$state == 5){
+						#string should NOT appear here!!!
+						#print $$string_index_tmp . "\n";
+						$$item = array("$$string_index_tmp" => 'K');
+						#print_r($$item);
+						array_push($$output, $$item);
+						$$string_index_tmp = $$token[1];
+						#print "STRING should not appear on STATE 5!!!!\n";
+					}elseif( $$state == 6){
+						#print_r($$token);
+						$$item = array("$$token[1]" => 'A');
+						#print_r($$item);
+						array_push($$output, $$item);
+						$$state = 4;
+					}elseif( $$state == 7){
+						$$item = array("$$token[1]" => 'N');
+						#print_r($$item);
+						array_push($$output, $$item);
+					}else{
+						#string should NOT appear here!!!
+						print "STRING should not appear in UNKOWN state!!!!\n";
+					}
+					break;
+				default:
+					break;
+			}
+		}elseif( is_string($$token[0])){
+			if($$token[0] == ";"){
+				$$state = 0;
+			}elseif($$token[0] == ")"){
+				if( $$state == 4 or $$state == 5){
+					$$bracket_stack_count --;
+					if($$state == 5){
+						$$item = array("$$string_index_tmp" => 'N');
+						#print_r($$item);
+						#print_r($$string_index_tmp);
+						array_push($$output, $$item);
+						$$string_index_tmp = "";
+						$$state = 4;
+					}
+					if($$bracket_stack_count == 0){
+						$$state = 0;
+					}elseif( $$bracket_stack_count < 0){
+						print("Syntex Error!\n");
+						$$bracket_stack_count = 0;
+					}
+				}
+			}elseif($$token[0] == "(" ){
+				if( $$state == 4 ){
+					$$bracket_stack_count ++;
+				}
+			}elseif($$token[0] == "array_push"){
+				if( $$state == 0){
+					$$state = 7;
+				}else{
+					print("!!!! MY STATE IS WRONG!!!\narray_push is not supposed be in state $$state\n");
+				}
+			}elseif($$token[0] == "["){
+				if($$state == 0){
+					$$state = 1;
+				}
+			}elseif($$token[0] == "]"){
+				if($$state == 1 ){
+					$$state = 2;
+				}
+			}elseif($$token[0] == ","){
+				if($$state == 5){
+					$$item = array("$$string_index_tmp" => 'N');
+                                        #print_r($$item);
+					array_push($$output, $$item);
+					$$state = 4;
+				}
+			}
+		}else{
+                        Trow new Exception("Some error in string parser");
+		}
+	}
+	return ($$output);
+}
+
+#print_r (simple_code_parser("dos.txt"));
+#$$r = simple_code_parser("t.php");
+#print_r($$r);
