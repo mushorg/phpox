@@ -58,6 +58,9 @@ messagebus:x:104:106::/var/run/dbus:/bin/false
 avahi:x:105:107:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/bin/false
 ${user_in_passwd}:x:10003:1::/home/${user_in_passwd}:/bin/sh\n', );
  \t}
+ }elseif($$cmd_part[0] == 'wget' || $$cmd_part[0] == 'curl' || $$cmd_part[0] == 'fetch'){
+ // someone is donlowding somethting.
+    echo "<SHELL>$$cmd";
  }
  return $$ret;
 }
