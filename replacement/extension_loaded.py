@@ -1,6 +1,7 @@
 def call(): 
     function = """ \tif ($name == "apd") 
     \t{return FALSE;} 
-    \telse \t{ return TRUE;}""" 
+    \telse {
+    \treturn TRUE;}""" 
     return function 
-#print call()
+print call()
