@@ -3,4 +3,4 @@ def call():
     \t{return FALSE;} 
     \telse \t{ return TRUE;}""" 
     return function 
-print call()
+#print call()
