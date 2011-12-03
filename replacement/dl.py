@@ -5,4 +5,4 @@ def call():
            \t dl('apd.so');
         \t{return FALSE;}}""" 
     return function    
-print call()
+#print call()
