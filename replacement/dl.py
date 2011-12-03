@@ -1,4 +1,3 @@
-import extension_loaded
 def call():
     function = """ if (!extension_loaded('apd')) {
         \t{return 'NO Newly Version;};
