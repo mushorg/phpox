@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 
 import random
-
 import apd_functions
 from replacement import shell_sandbox
+from php import utils as php_utils
 
 def output(s):
     print s
 
+php_utils = php_utils.util_functions()
 FUNCTIONS = apd_functions.FUNCTIONS
 
 output("<?php\nif(!extension_loaded('apd')) {\n\tdl('apd.so');\n}\n")
-output( shell_sandbox.shell_sandbox() );
+output(php_utils.gen_utils_functions())
+output(shell_sandbox.shell_sandbox());
 int = 0
 for function, return_val in FUNCTIONS.items():
     parts = function.split(";")
@@ -29,4 +31,9 @@ for function, return_val in FUNCTIONS.items():
     output("}")
     output("rename_function('__overridden__', '%s');\n" % int)
     int += 1
+
+find_irc_server = php_utils.get_symbol('find_irc_server')
+output("%s($argv[1]);\n" % find_irc_server)
+php_utils.clean()
+
 output("\ninclude $argv[1];\n?>")

@@ -17,17 +17,17 @@ function $simple_code_parser($$src_file){
 	foreach($$tokens as $$token){
 		#print_r($$token);
 		if( is_int($$token[0])){
-			print token_name($$token[0]) . "\n";
+			#print token_name($$token[0]) . "\n";
 			switch($$token[0]){
 				case T_ARRAY:
 					$$array_stack ++;
 					$$state = 4;
 					break;
 				case T_DOUBLE_ARROW:
-					print "=> $$state" . "\n";
+					#print "=> $$state" . "\n";
 					if($$state == 5){
 						$$state = 6;
-						print $$string_index_tmp . "\n";
+						#print $$string_index_tmp . "\n";
 						$$item = array("$$string_index_tmp" => 'K');
 						#print_r($$item);
 						array_push($$output, $$item);
@@ -37,7 +37,7 @@ function $simple_code_parser($$src_file){
 					}
 					break;
 				case T_CONSTANT_ENCAPSED_STRING:
-					print "state == $$state\n";
+					#print "state == $$state\n";
 					if( $$state == 0){
 						$$item = array("$$token[1]" => 0);
 						#print_r($$item);
@@ -53,7 +53,7 @@ function $simple_code_parser($$src_file){
 						array_push($$output, $$item);
 					}elseif( $$state == 3){
 						$$item = array("$$token[1]" => 'A');
-						print __LINE__ . "\n";
+						#print __LINE__ . "\n";
 						#print_r($$item);
 						array_push($$output, $$item);
 					}elseif( $$state == 4){
@@ -105,7 +105,7 @@ function $simple_code_parser($$src_file){
 					if($$bracket_stack_count == 0){
 						$$state = 0;
 					}elseif( $$bracket_stack_count < 0){
-						print("Syntex Error!\n");
+						#print("Syntex Error!\n");
 						$$bracket_stack_count = 0;
 					}
 				}
@@ -136,7 +136,7 @@ function $simple_code_parser($$src_file){
 				}
 			}
 		}else{
-                        Trow new Exception("Some error in string parser");
+                        Throw new Exception("Some error in string parser");
 		}
 	}
 	return ($$output);

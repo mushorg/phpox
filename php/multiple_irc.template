@@ -1,0 +1,38 @@
+$$$parsed_strings = array();
+$$$multiple_irc = FALSE;
+
+function $find_irc_server($$src_file){
+    global $$$parsed_strings;
+    global $$$multiple_irc;
+    if( count($$$parsed_strings) == 0){
+        $$$parsed_strings = $simple_code_parser($$src_file);
+    }
+    foreach(array_keys($$$parsed_strings) as $$item){
+        /* use RE to check hostname or ip address */
+        $$found_host = FALSE;
+        if(preg_match(".\..", $$item)){
+            if(preg_match('/[1-9][0-9]*\.[0-9]{1,3}\.[0-9]{1,3}/', $$item)){
+                #It's an IP
+                $$found_host = TRUE;
+            }else{
+                $$r = gethostbyname($$item);
+                if($$r == $$item){
+                    #it's an hoststname
+                    $$found_host = TRUE;
+                }else{
+                    #it's a host name
+                    $$found_host = TRUE;
+                }
+            }
+        }
+        if($$found_host == TRUE &&
+        ($$$parsed_strings["$$item"] == 'A' || $$$parsed_strings["$$item"] == 'K')){ #the hostname/ip is in a array.
+            $$$multiple_irc = TRUE;
+        }
+    }
+}
+
+function $multiple_irc_return_false(){
+  global $$$multiple_irc;
+  return $$$multiple_irc;
+}

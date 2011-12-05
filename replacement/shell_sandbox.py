@@ -1,4 +1,5 @@
 from string import Template
+from php import utils as php_utils 
 import random
 def shell_sandbox():
    function = Template("""
