@@ -82,13 +82,14 @@ def sandbox(script, secs):
         print "Communication error:", e.message
     else:
         proc_listener.kill()
-        analyzer = analysis.DataAnalysis(script)
+        analyzer = analysis.DataAnalysis(script, debug=DEBUG_LEVEL)
         botnet = analyzer.analyze(stdout_value)
         logger = log_sqlite.LogSQLite()
         logger.insert(botnet)
         print language
         #print stdout_value
         print "Parsed with sandbox"
+        return botnet
     
 if __name__ == '__main__':
     print "\nPHP sandbox version: %s\n" % VERSION

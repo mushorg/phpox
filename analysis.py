@@ -19,12 +19,14 @@ class Botnet(object):
 
 class DataAnalysis(object):
 
-    def __init__(self, script):
+    def __init__(self, script, debug=0):
         self.botnet = Botnet(script)
+        self.debug_level = debug
         
     def analyze(self, output):
         for line in output.split("\n"):
-            print repr(line)
+            if( self.debug_level> 0):
+                print repr(line)
             line = line.decode("windows-1252")
             if line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
