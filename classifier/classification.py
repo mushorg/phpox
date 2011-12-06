@@ -41,33 +41,31 @@ def ranking_similarity(setpath, similarity_phpbot, similarity_phpecho, similarit
             if max_prob_list.index(max(max_prob_list)) == 0:
                 addtrainset("cp " + setpath+" classifier/trainsamples/phpbot/")
                 strprint = strprint + "phpbot" +"\nSimilarity:" + str(max(max_prob_list))
-                return 0
+                
                 #print "mv " + docpath+"/"+sample + " trainset/phpbot/"
             elif max_prob_list.index(max(max_prob_list)) == 1:              
                 addtrainset("cp " + setpath+" classifier/trainsamples/phpecho/")
                 strprint = strprint + "phpecho" + "\nSimilarity:" + str(max(max_prob_list))
-                return 1
+                
             elif max_prob_list.index(max(max_prob_list)) == 2:              
                 addtrainset("cp " + setpath+" classifier/trainsamples/phpdownloading/")
                 strprint = strprint + "phpdownaloding" + "\nSimilarity:" +  str(max(max_prob_list))
-                return 2
+                
             else:
                 addtrainset("cp " + setpath+" classifier/trainsamples/phpshell/")
                 strprint = strprint + "phpshell" + "\nSimilarity:" +  str(max(max_prob_list))
-                return 3
             
             print strprint
             
         else:
             addtrainset("cp " + setpath + " classifier/trainsamples/checking/")
             print  "Possible Classification: " + str(max_prob_list.index(max(max_prob_list))) + "  Similarity:" + str(max(max_prob_list))
-            return 4
-            #return 0
+            
     else:
             print "Ambiguous classification:"+ str(getMedian_prob_list.index(max(getMedian_prob_list)))+" v.s " + str(max_prob_list.index(max(max_prob_list)))
             addtrainset("cp " + setpath+ " classifier/trainsamples/others/")
-            return 5
-            #return 2
+            
+          
    
 def addtrainset(command):
     os.system(command)
