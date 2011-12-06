@@ -43,11 +43,11 @@ def detect_language(script):
     language = lang_classifier.classify(open(script, "r").read())
     return language
 
-def sandbox(script, secs):
+def sandbox(script, secs, pre=os.getcwd() + '/'):
     #language = detect_language(script)
-    pre = os.getcwd().rsplit("/",1)[0] + "/"
-    print "\n PRE: ", pre, "\n"
+    #pre = os.getcwd().rsplit("/",1)[0] + "/"
     if DEBUG_LEVEL > 0:
+        print "\n PRE: ", pre, "\n"
         stderr_opt = None
     else:
         stderr_opt = subprocess.PIPE
@@ -60,14 +60,16 @@ def sandbox(script, secs):
         t = threading.Thread(target=server.serve_forever)
         t.setDaemon(True)
         t.start()"""
-        print pre+"listener.php"
+        if DEBUG_LEVEL > 0:
+            print pre+"listener.php"
         proc_listener = subprocess.Popen(["php", pre+"listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:
-        print "Listener running..."
+        if DEBUG_LEVEL > 0:
+            print "Listener running..."
     try:
-        proc_sandbox = subprocess.Popen(["php", "apd_sandbox.php", script], 
+        proc_sandbox = subprocess.Popen(["php", pre+"apd_sandbox.php", script], 
                 shell = False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
@@ -76,7 +78,8 @@ def sandbox(script, secs):
     except Exception as e:
         print "Error executing the sandbox:", e.message
     else:
-        print "Sandbox running..."
+        if DEBUG_LEVEL > 0:
+            print "Sandbox running..."
     stdout_value = ""
     try:
         threading.Thread(target=partial(killer, proc_sandbox, secs)).start()
@@ -92,11 +95,13 @@ def sandbox(script, secs):
         logger.insert(botnet)
         #print language
         #print stdout_value
-        print "Parsed with sandbox"
+        if DEBUG_LEVEL > 0:
+            print "Parsed with sandbox"
         return botnet
     
 if __name__ == '__main__':
-    print "\nPHP sandbox version: %s\n" % VERSION
+    if DEBUG_LEVEL > 0:
+        print "\nPHP sandbox version: %s\n" % VERSION
     secs = 10
 
     opts = getopt.getopt(sys.argv[1:], "v", [])

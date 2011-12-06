@@ -1,4 +1,5 @@
 import hashlib
+import cgi
 from datetime import datetime
 from xml.dom.minidom import Document
 
@@ -81,7 +82,7 @@ class Botnet(object):
                 irc_privmsg.appendChild(doc.createTextNode(i))
         else:
             irc_privmsgs.appendChild(doc.createElement('irc_privmsg'))
-        return xml.toprettyxml(indent="" )
+        return doc.toprettyxml(indent = " ")
 
 class DataAnalysis(object):
 
