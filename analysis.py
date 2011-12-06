@@ -22,6 +22,12 @@ class Botnet(object):
         doc = Document()
         xml = doc.createElement('xml')
         doc.appendChild(xml)
+        analysis_date = doc.createElement('analysis_date')
+        xml.appendChild(analysis_date)
+        analysis_date.appendChild(doc.createTextNode(self.analysis_date))
+        file_md5 = doc.createElement('file_md5')
+        xml.appendChild(file_md5)
+        file_md5.appendChild(doc.createTextNode(self.file_md5));
         bot = doc.createElement('bot')
         xml.appendChild(bot)
         host = doc.createElement('host')
