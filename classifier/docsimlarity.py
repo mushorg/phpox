@@ -9,10 +9,16 @@ def fileio(filename):
     fh.close()
     return gettext
 
+def filewrite(filename, strlist):
+    fh = open(filename, 'w')
+    fh.write(strlist)
+    fh.close()
+
 def textread(content):
     strtext = html2text(str(content))
     strtext = strtext.replace('\n'," ")
     strtext = strtext.replace('\"', "")
+    strtext = strtext.replace('\'', "")
     strtext = strtext.lower()
     return strtext
     
@@ -64,7 +70,7 @@ def comp_descriptors (document1, document2):
     #document1_dict = convert_list_into_dictionary(document1, 0)
     #document2_dict = convert_list_into_dictionary(document2, 0)
     similar_descriptors = 0
-
+    
     for item in document1.keys():
         if document2.has_key(item):
             similar_descriptors += 1
