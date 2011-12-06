@@ -27,6 +27,7 @@ print """
 
   <form method="post" action="submit.py">
     <p>message: <input type="file" name="upload_file"/></p>
+    <p><input type="submit" name="submit_files"></p>
   </form>
 
 </body>
