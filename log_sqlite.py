@@ -11,19 +11,20 @@ class LogSQLite(object):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
                 CREATE TABLE IF NOT EXISTS 
-                botnets(id INTEGER PRIMARY KEY, 
-                analysis_date TEXT, 
-                file_md5 TEXT, 
-                file_name TEXT, 
-                irc_addr INTEGER, 
-                irc_server_pwd TEXT, 
+                botnets(id INTEGER PRIMARY KEY,
+                file_md5 TEXT,
+                file_name TEXT,
+                irc_addr INTEGER,
+                irc_server_pwd TEXT,
                 irc_nick TEXT,
-                irc_user TEXT, 
-                irc_mode TEXT, 
+                irc_user TEXT,
+                irc_mode TEXT,
                 irc_channel TEXT,
                 irc_nickserv TEXT,
                 irc_notice TEXT,
-                irc_privmsg TEXT)
+                irc_privmsg TEXT,
+                first_analysis_date TEXT,
+                last_analysis_date TEXT)
                 """)
         self.connection.commit()
         self.cursor.close()
@@ -33,11 +34,12 @@ class LogSQLite(object):
     def insert(self, botnet):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
-                INSERT INTO botnets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
-                (None, botnet.analysis_date, botnet.file_md5, botnet.file_name, 
-                 botnet.irc_addr, botnet.irc_server_pwd, botnet.irc_nick,
-                 botnet.irc_user, botnet.irc_mode, ', '.join(botnet.irc_channel),
-                 repr(str(botnet.irc_nickserv)).replace("'", ""), ', '.join(botnet.irc_notice), repr(str(botnet.irc_privmsg)).replace("'", "")))
+                INSERT INTO botnets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
+                (None, botnet.file_md5, botnet.file_name, botnet.irc_addr,
+                 botnet.irc_server_pwd, botnet.irc_nick, botnet.irc_user,
+                 botnet.irc_mode, ', '.join(botnet.irc_channel), repr(str(botnet.irc_nickserv)).replace("'", ""),
+                 ', '.join(botnet.irc_notice), repr(str(botnet.irc_privmsg)).replace("'", ""),
+                 botnet.first_analysis_date, botnet.last_analysis_date))
         self.connection.commit()
         self.cursor.close()
         self.connection.close()
