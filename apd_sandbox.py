@@ -7,6 +7,7 @@ import time
 import subprocess
 import threading
 from functools import partial
+import classifier.classification
 
 import analysis
 import log_sqlite
@@ -104,12 +105,14 @@ if __name__ == '__main__':
             DEBUG_LEVEL += 1
 
     try:
+        classifier.classification.classifier_start(opts[1][0])
         sandbox(opts[1][0], secs)
     except(IndexError):
         sample_list = os.listdir("samples/get")
         random.shuffle(sample_list)
         for sample in sample_list:
-            print sample
+            scriptclass=classifier.classification.classifier_start("samples/get/" + sample)
             sandbox("samples/get/" + sample, secs)
+            
             raw_input("Enter to continue")
 
