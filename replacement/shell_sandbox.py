@@ -61,7 +61,7 @@ ${user_in_passwd}:x:10003:1::/home/${user_in_passwd}:/bin/sh\n', );
  \t}
  }elseif($$cmd_part[0] == 'wget' || $$cmd_part[0] == 'curl' || $$cmd_part[0] == 'fetch'){
  // someone is donlowding somethting.
-    echo "<SHELL>$$cmd";
+    echo " SHELL $$cmd";
  }
  return $$ret;
 }
