@@ -43,7 +43,7 @@ def detect_language(script):
     return language
 
 def sandbox(script, secs):
-#    language = detect_language(script)
+    #language = detect_language(script)
     pre = os.getcwd().rsplit("/",1)[0] + "/"
     print "\n PRE: ", pre, "\n"
     if DEBUG_LEVEL > 0:
@@ -51,8 +51,8 @@ def sandbox(script, secs):
     else:
         stderr_opt = subprocess.PIPE
 
-#    if language == "php":
-#        php_tag_check(script)
+        #if language == "php":
+            #php_tag_check(script)
     try:
         """fake_listener = listener.FakeListener()
         server = fake_listener.main(script)
@@ -89,7 +89,7 @@ def sandbox(script, secs):
         botnet = analyzer.analyze(stdout_value)
         logger = log_sqlite.LogSQLite()
         logger.insert(botnet)
-        print language
+        #print language
         #print stdout_value
         print "Parsed with sandbox"
         return botnet

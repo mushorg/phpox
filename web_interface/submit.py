@@ -4,10 +4,9 @@ import cgitb; cgitb.enable()
 import sys
 import os
 import hashlib
-sandbox_path = "../../"
 
-sandbox_path_abs = "/home/guesslin/workspace/phpsandbox/php_sandbox-git/trunk/"
-sys.path.append(sandbox_path_abs)
+sandbox_path = os.getcwd().rsplit("/", 1)[0]
+sys.path.append(sandbox_path)
 import apd_sandbox
 
 print "Context-type: text/html"
@@ -32,12 +31,10 @@ elif form.has_key("filename"):
         data = item.file.read()
         print data
         sample_name = hashlib.md5(data).hexdigest()
-        fout = file(os.path.join(sandbox_path_abs + "samples/", sample_name), "w")
+        fout = file(os.path.join(sandbox_path + "/samples/", sample_name), "w")
         fout.write(data)
         fout.close()
-        apd_sandbox.sandbox(sandbox_path_abs + "samples/" + sample_name, 5)
-
-
+        apd_sandbox.sandbox(sandbox_path + "/samples/" + sample_name, 5)
 print """
 </body>
 </html>
