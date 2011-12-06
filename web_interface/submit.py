@@ -1,36 +1,37 @@
-#!/usr/bin/env python
-
 import cgi
-import cgitb; cgitb.enable()  # for troubleshooting
+import cgitb; cgitb.enable()
+import sys
+import os
+import hashlib
+sandbox_path = "/home/guesslin/workspace/phpsandbox/php_sandbox-git/trunk/"
+sys.path.append(sandbox_path)
+#sys.path.append("/opt/php-sandbox/trunk/")
+import apd_sandbox
 
-print "Content-type: text/html"
+print "Context-type: text/html"
 print
-
 print """
 <html>
-
-<head><title>Sample CGI Script</title></head>
-
-<body>
-
-  <h3> Sample CGI Script </h3>
 """
 
 form = cgi.FieldStorage()
-message = form.getvalue("upload_file", "(no file uploaded")
+if not form:
+    print """
+    <form action="submit.py" method="POST" enctype="multipart/form-data">
+    <input type="file" name="filename" />
+    <input type="submit" name="submit" />
+    </form>
+    """
+elif form.has_key("filename"):
+    item = form["filename"]
+    if item.file:
+        data = item.file.read()
+        print data
+        sample_name = hashlib.md5(data).hexdigest()
+        fout = file(os.path.join(sandbox_path + "samples/", sample_name), "w")
+        fout.write(data)
+        apd_sandbox.sandbox(sandbox_path + "samples/" + sample_name, 5)
+        fout.close()
 
-print """
 
-  <p>Previous message: %s</p>
-
-  <p>form
-
-  <form method="post" action="submit.py">
-    <p>message: <input type="file" name="upload_file" /></p>
-    <p><input type="submit" name="submit_files" value="Submit"/></p>
-  </form>
-
-</body>
-
-</html>
-""" % len(cgi.escape(message))
+print "</html>"
