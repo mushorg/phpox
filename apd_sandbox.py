@@ -43,21 +43,24 @@ def detect_language(script):
     return language
 
 def sandbox(script, secs):
-    language = detect_language(script)
+#    language = detect_language(script)
+    pre = os.getcwd().rsplit("/",1)[0] + "/"
+    print "\n PRE: ", pre, "\n"
     if DEBUG_LEVEL > 0:
         stderr_opt = None
     else:
         stderr_opt = subprocess.PIPE
 
-    if language == "php":
-        php_tag_check(script)
+#    if language == "php":
+#        php_tag_check(script)
     try:
         """fake_listener = listener.FakeListener()
         server = fake_listener.main(script)
         t = threading.Thread(target=server.serve_forever)
         t.setDaemon(True)
         t.start()"""
-        proc_listener = subprocess.Popen(["php", "listener.php"], shell = False)
+        print pre+"listener.php"
+        proc_listener = subprocess.Popen(["php", pre+"listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:

@@ -1,17 +1,21 @@
+#!/usr/bin/env python
 import cgi
 import cgitb; cgitb.enable()
 import sys
 import os
 import hashlib
-sandbox_path = "/home/guesslin/workspace/phpsandbox/php_sandbox-git/trunk/"
-sys.path.append(sandbox_path)
-#sys.path.append("/opt/php-sandbox/trunk/")
+sandbox_path = "../../"
+
+sandbox_path_abs = "/home/guesslin/workspace/phpsandbox/php_sandbox-git/trunk/"
+sys.path.append(sandbox_path_abs)
 import apd_sandbox
 
 print "Context-type: text/html"
 print
 print """
 <html>
+<head><title>Test upload pages</title></head>
+<body>
 """
 
 form = cgi.FieldStorage()
@@ -28,10 +32,13 @@ elif form.has_key("filename"):
         data = item.file.read()
         print data
         sample_name = hashlib.md5(data).hexdigest()
-        fout = file(os.path.join(sandbox_path + "samples/", sample_name), "w")
+        fout = file(os.path.join(sandbox_path_abs + "samples/", sample_name), "w")
         fout.write(data)
-        apd_sandbox.sandbox(sandbox_path + "samples/" + sample_name, 5)
         fout.close()
+        apd_sandbox.sandbox(sandbox_path_abs + "samples/" + sample_name, 5)
 
 
-print "</html>"
+print """
+</body>
+</html>
+"""
