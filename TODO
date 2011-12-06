@@ -1,7 +1,7 @@
 SANDBOX
 - Alice Sandbox automation
 - Louis shell command parsing
-- Louis (high) Multiple IRC server
+- Louis (high) Multiple IRC server ( Analyzer have no idea to multiple IRC server)
 - Lukas, Alice Flag script output and socket output differently (Find a way to overwrite echo calls)
 - Lukas, Alice, Python Listener
 - Louis (low) Log parameters for function(_exists) calls
@@ -20,7 +20,7 @@ WEB INTERFACE
 (coding day)
 Do we want to provide a web interface to submit samples?
 Generate a readable analysis output
-Provide xml output
+Provide xml output (FIXME: some escape char)
 
 VARIOUS
 - Syuan Sunday Presentation
