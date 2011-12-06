@@ -79,7 +79,7 @@ def comp_descriptors (document1, document2):
         equality = float(similar_descriptors) / float ((math.sqrt(items_document1) * math.sqrt(items_document2)))
         return equality
     except ZeroDivisionError as e:
-        print "float division by zero"
+        #print "float division by zero"
         return 0
     
 def document_rank(request, document_list, order):
