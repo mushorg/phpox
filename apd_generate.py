@@ -1,5 +1,7 @@
+"""apd_generate.py
+apd_generate.py generates apd_sandbox.php
+"""
 #!/usr/bin/env python
-
 import random
 import apd_functions
 from replacement import shell_sandbox
