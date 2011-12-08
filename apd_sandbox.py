@@ -1,5 +1,8 @@
+"""apd_sandbox.py
+apd_sandbox.py runs the replaced php function, it is also the main 
+function of the sandbox. 
+"""
 #!/usr/bin/env python
-
 import random
 import os
 import sys
