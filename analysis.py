@@ -14,7 +14,8 @@ class Botnet(object):
     def __init__(self, script):
         self.file_name = script.rsplit("/", 1)[1]
         self.file_md5 = hashlib.md5(open(script).read()).hexdigest()
-        self.analysis_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.first_analysis_date = ""
+        self.last_analysis_date = ""
         self.irc_addr = ""
         self.irc_server_pwd = ""
         self.irc_nick = ""
@@ -29,9 +30,12 @@ class Botnet(object):
         doc = Document()
         xml = doc.createElement('xml')
         doc.appendChild(xml)
-        analysis_date = doc.createElement('analysis_date')
-        xml.appendChild(analysis_date)
-        analysis_date.appendChild(doc.createTextNode(self.analysis_date))
+        first_analysis_date = doc.createElement('first_analysis_date')
+        xml.appendChild(first_analysis_date)
+        first_analysis_date.appendChild(doc.createTextNode(self.first_analysis_date))
+        last_analysis_date = doc.createElement('last_analysis_date')
+        xml.appendChild(last_analysis_date)
+        last_analysis_date.appendChild(doc.createTextNode(self.last_analysis_date))
         file_md5 = doc.createElement('file_md5')
         xml.appendChild(file_md5)
         file_md5.appendChild(doc.createTextNode(self.file_md5));
@@ -85,7 +89,7 @@ class Botnet(object):
             for i in self.irc_privmsg:
                 irc_privmsg = doc.createElement('irc_privmsg')
                 irc_privmsgs.appendChild(irc_privmsg)
-                irc_privmsg.appendChild(doc.createTextNode(i))
+                irc_privmsg.appendChild(doc.createTextNode(i.decode('ascii', 'ignore')))
         else:
             irc_privmsgs.appendChild(doc.createElement('irc_privmsg'))
         return doc.toprettyxml(indent = " ")
@@ -102,7 +106,10 @@ class DataAnalysis(object):
             if( self.debug_level> 0):
                 print repr(line)
             line = line.decode("windows-1252")
-            if line[:4] == "ADDR":
+            print line
+            if line[:9] == "MALICIOUS":
+                print "Malicious call", line[8:] 
+            elif line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
             elif line[:4] == "PASS":
                 self.botnet.irc_server_pwd = line[5:]

@@ -32,17 +32,18 @@ class LogSQLite(object):
         
     def check_md5(self, botnet):
         self.cursor = self.connection.cursor()
-        self.cursor.execute("""SELECT first_analysis_date FROM botnets WHERE file_md5 == ?""", botnet.file_md5)
+        self.cursor.execute("""SELECT first_analysis_date FROM botnets WHERE file_md5 == ?""", (botnet.file_md5,))
         date = self.cursor.fetchone()
         self.cursor.close()
         return date
         
     def insert(self, botnet):
         date = self.check_md5(botnet)
-        if date == "":
+        if not date or not date[0]:
             botnet.first_analysis_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         else:
-            botnet.first_analysis_date = date
+            botnet.first_analysis_date = date[0]
+        botnet.last_analysis_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
                 INSERT INTO botnets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 

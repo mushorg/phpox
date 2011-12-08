@@ -44,15 +44,13 @@ elif form.has_key("filename"):
         fout.close()
         botnet = apd_sandbox.sandbox(sandbox_path + "/samples/" + sample_name, 5, pre=sandbox_path + '/')
         if(xml == "1"):
-            print "Content-type: text/xml"
-            print
             print botnet.toxml()
         else:
-            print "Content-type: text/html"
-            print
             print "<html>"
             print "<body>"
             print form_body()
+            print "first analysis date: %s<br />" % botnet.first_analysis_date
+            print "last analysis date: %s<br />" % botnet.last_analysis_date
             print "file md5: %s<br />" % botnet.file_md5
             print "irc_addr: %s<br />" % botnet.irc_addr
             print "irc_server_pwd: %s<br />" % botnet.irc_server_pwd
