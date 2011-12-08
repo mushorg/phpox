@@ -1,3 +1,7 @@
+"""apd_functions.py
+apd_functions.py holds information for which function to be replaced.
+"""
+
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
 from replacement import fgets, php_uname, extension_loaded, dl
 import random
@@ -9,6 +13,7 @@ FUNCTIONS = {
              "diskfreespace;" : "\treturn '%s';" % freespace,
              "disk_total_space;" : "\treturn '%s';" % str(random.randint(75161927680, 397284474880)),
              "exec;$cmd;&$ret;" : execute.call(),
+             "extension_loaded;$name" : extension_loaded.call(),
              "fgets;$handle;$length;" : fgets.call(),
              #"function_exists;" : "\treturn true;",
              "fsockopen;$hostname;$port;$errno;$errstr;$timeout;" : fsockopen.call(), 
@@ -20,6 +25,7 @@ FUNCTIONS = {
              "ini_get;$varname;" : ini_get.call(), 
              "is_writable;" : "\treturn true;", 
              "is_callable;" : "\treturn true;",
+             """"mail;$to;$subject;string;$message;": mail.call(),"""
              "php_uname;" : php_uname.call(), 
              "extension_loaded;" : extension_loaded.call(),
              "dl;" : dl.call(),
