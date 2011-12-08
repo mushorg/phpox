@@ -5,12 +5,11 @@ It's used to extend the database, sandbox.db with text COLUMN
 
 import sqlite3
 
-"""
-class LogSQLite with member function ¡§alter¡¨ which will add columns to 
-the database , "sandbox.db" , and declare an instance of class LogSQLite.
-"""
+
 class LogSQLite(object):
-    
+    """
+    class LogSQLite with member function ¡§alter¡¨ which will add columns to the database , "sandbox.db" , and declare an instance of class LogSQLite.
+    """  
     def __init__(self):
         self.connection = sqlite3.connect("sandbox.db")
         self.alter()
