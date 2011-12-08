@@ -4,12 +4,14 @@ as data of botnet password dictionary info.
 """
 
 import re
-# 將sample打開
+
 def open_sample(sample):
+    """open the sample,, strip it and return the context string"""
     with open(sample, "r") as sample_fp:
         sample_string = sample_fp.read()
     return sample_string
-# 比對open_sample(sample)中的字串，只要是 " " 內的字串，就會被抓出來
+
 def find_strings(sample):
+    """extract the string inside the double quotation marks in the context, and return them in the list"""
     string_list = re.findall(r'"(.*?)"', open_sample(sample))
     return set(string_list)
