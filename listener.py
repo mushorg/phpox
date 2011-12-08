@@ -1,3 +1,9 @@
+"""listener.py
+listener.php is intend to be a fake irc server , pretend to be the irc server 
+which bots trying to connect. listener.py is similar to listener.php but trying
+ to catch the botnet password with brute.py function. 
+"""
+
 import SocketServer
 import time
 import brute
