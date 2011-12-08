@@ -1,10 +1,16 @@
+"""analysis.py
+analysis.py gets all the standard output of botnet information from linux terminal
+to xml document.
+"""
+
 import hashlib
 import cgi
 from datetime import datetime
 from xml.dom.minidom import Document
 
+
 class Botnet(object):
-    
+    """  this class contains irc bot info"""
     def __init__(self, script):
         self.file_name = script.rsplit("/", 1)[1]
         self.file_md5 = hashlib.md5(open(script).read()).hexdigest()
@@ -84,8 +90,9 @@ class Botnet(object):
             irc_privmsgs.appendChild(doc.createElement('irc_privmsg'))
         return doc.toprettyxml(indent = " ")
 
-class DataAnalysis(object):
 
+class DataAnalysis(object):
+    """this class is used to extracts raw sandbox data to useful info for us"""
     def __init__(self, script, debug=0):
         self.botnet = Botnet(script)
         self.debug_level = debug
