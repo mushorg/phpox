@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 class LogSQLite(object):
     
@@ -29,9 +30,19 @@ class LogSQLite(object):
         self.connection.commit()
         self.cursor.close()
         
-
+    def check_md5(self, botnet):
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("""SELECT first_analysis_date FROM botnets WHERE file_md5 == ?""", botnet.file_md5)
+        date = self.cursor.fetchone()
+        self.cursor.close()
+        return date
         
     def insert(self, botnet):
+        date = self.check_md5(botnet)
+        if date == "":
+            botnet.first_analysis_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            botnet.first_analysis_date = date
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
                 INSERT INTO botnets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
