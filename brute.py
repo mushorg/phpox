@@ -1,5 +1,5 @@
 """brute.py
-brute.py opens sample php file and get words inside¡§  ¡¨, and used
+brute.py opens sample php file and get words inside double quotation marks, and used
 as data of botnet password dictionary info.
 """
 
