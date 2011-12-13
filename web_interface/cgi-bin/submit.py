@@ -31,7 +31,7 @@ if not form:
     <html>
     <head><title>Test upload pages</title></head>
     <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
-    <body  align="center" style="background-color:#616161"; >
+    <body  align="center" style="background-color:#FFFFFF"; >
     <div id = "background" height="200px" width="700px"  align="center" >
         <div id="sandboxlogo" >
              <img height="125px" width="250px" src="images/PHP_SandBox_log.png"/>   
@@ -56,6 +56,8 @@ elif form.has_key("filename"):
         if(xml == "1"):
             print botnet.toxml()
         else:
+            print "Content-type: text/html"
+            print 
             print "<html>"
             print "<body>"
             print form_body()
