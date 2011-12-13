@@ -15,7 +15,7 @@ def form_body():
     <div id = "background" align="center">
     <input type="file"  name="filename" />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <input type="radio" name="xml" value="0"> <font color="#EEEE00"><b>HTML</b></font></input>
+    <input type="radio" name="xml" value="0" checked> <font color="#EEEE00"><b>HTML</b></font></input>
     <input type="radio" name="xml" value="1"><font color="#EEEE00"><b>XML</intput>
     <p/><input type="submit" name="submit" />
     </div>
