@@ -2,12 +2,14 @@ function $simple_code_parser($$src_file){
 	#TODO fix the situation: $$a = "host1"; $$b="host2"; $$hosts=[$$a,$$b];
 	#BUG: $$a = file("a")
 
+        $$current_key = "";
+
 	$$array_stack = 0;
 	$$string_index_tmp = "";
 	$$state = 0;	
 	$$output = array();
 	$$bracket_stack_count = 0;
-	$$bracket_stack = array();
+	#$$bracket_stack = array();
 
 	$$state = 0;
 	#target: parse all strings
@@ -28,7 +30,7 @@ function $simple_code_parser($$src_file){
 					if($$state == 5){
 						$$state = 6;
 						#print $$string_index_tmp . "\n";
-						$$item = array("$$string_index_tmp" => 'K');
+						$$item = array("$$string_index_tmp" => array('type' => 'K', 'key' => $$current_key));
 						#print_r($$item);
 						array_push($$output, $$item);
 						$$string_index_tmp = "";
@@ -43,16 +45,14 @@ function $simple_code_parser($$src_file){
 						#print_r($$item);
 						array_push($$output, $$item);
 					}elseif( $$state == 1){
-						$$item = array("$$token[1]" => 'K');
-						#print_r($$item);
 						array_push($$output, $$item);
 						$$state = 3;
 					}elseif( $$state == 2){
-						$$item = array("$$token[1]" => 'N');
+						$$item = array("$$token[1]" => array('type' => 'N', 'key'=>''));
 						#print_r($$item);
 						array_push($$output, $$item);
 					}elseif( $$state == 3){
-						$$item = array("$$token[1]" => 'A');
+						$$item = array("$$token[1]" => array('type'=>'A', 'key'=>''));
 						#print __LINE__ . "\n";
 						#print_r($$item);
 						array_push($$output, $$item);
@@ -60,24 +60,24 @@ function $simple_code_parser($$src_file){
 						#the string may be the index key....
 						$$state = 5;
 						#print "enter state 5\n";
-						$$string_index_tmp = $$token[1];
+						$$current_key = $$string_index_tmp = $$token[1];
 						#print $$token[1] . "\n";
 					}elseif( $$state == 5){
 						#string should NOT appear here!!!
 						#print $$string_index_tmp . "\n";
-						$$item = array("$$string_index_tmp" => 'K');
+						$$item = array("$$string_index_tmp" => array('type' => 'K', 'key'=>''));
 						#print_r($$item);
 						array_push($$output, $$item);
 						$$string_index_tmp = $$token[1];
 						#print "STRING should not appear on STATE 5!!!!\n";
 					}elseif( $$state == 6){
 						#print_r($$token);
-						$$item = array("$$token[1]" => 'A');
+						$$item = array("$$token[1]" => array('type' => 'A', 'key'=>''));
 						#print_r($$item);
 						array_push($$output, $$item);
 						$$state = 4;
 					}elseif( $$state == 7){
-						$$item = array("$$token[1]" => 'N');
+						$$item = array("$$token[1]" => array('type'=>'N', 'key' => ''));
 						#print_r($$item);
 						array_push($$output, $$item);
 					}else{
@@ -95,7 +95,7 @@ function $simple_code_parser($$src_file){
 				if( $$state == 4 or $$state == 5){
 					$$bracket_stack_count --;
 					if($$state == 5){
-						$$item = array("$$string_index_tmp" => 'N');
+						$$item = array("$$string_index_tmp" => array('type'=>'N', 'key'=>''));
 						#print_r($$item);
 						#print_r($$string_index_tmp);
 						array_push($$output, $$item);
@@ -129,7 +129,7 @@ function $simple_code_parser($$src_file){
 				}
 			}elseif($$token[0] == ","){
 				if($$state == 5){
-					$$item = array("$$string_index_tmp" => 'N');
+					$$item = array("$$string_index_tmp" => array('type' => 'N', 'key' => ''));
                                         #print_r($$item);
 					array_push($$output, $$item);
 					$$state = 4;
