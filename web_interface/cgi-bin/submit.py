@@ -12,10 +12,13 @@ import apd_sandbox
 def form_body():
     return """
     <form action="submit.py" method="POST" enctype="multipart/form-data">
-    <input type="file" name="filename" />
-    <input type="submit" name="submit" />
-    <input type="radio" name="xml" value="0">HTML</input>
-    <input type="radio" name="xml" value="1">XML</intput>
+    <div id = "background" align="center">
+    <input type="file"  name="filename" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="xml" value="0"> <font color="#EEEE00"><b>HTML</b></font></input>
+    <input type="radio" name="xml" value="1"><font color="#EEEE00"><b>XML</intput>
+    <p/><input type="submit" name="submit" />
+    </div>
     </form>
     """
 
@@ -27,7 +30,14 @@ if not form:
     print """
     <html>
     <head><title>Test upload pages</title></head>
-    <body>
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+    <body  align="center" style="background-color:#616161"; >
+    <div id = "background" height="200px" width="700px"  align="center" >
+        <div id="sandboxlogo" >
+             <img height="125px" width="250px" src="images/PHP_SandBox_log.png"/>   
+             <img height="125px" width="600px" src="images/load.png"/><p/>
+        </div> 
+    </div> 
     """ + form_body() + """
     </body>
     </html>
