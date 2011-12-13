@@ -1,0 +1,47 @@
+a
+{
+	text-decoration: none;
+    color: #000000;
+    clip:  height;
+    padding-right: 10px;
+    padding-left: 10px;
+    font-family: 'Comic Sans MS';
+    font-size:x-large;
+	z-index:0;
+}
+
+a:hover
+{
+	text-decoration:underline;
+	color:#9900CC;
+}
+
+#sandboxlogo
+{
+	position:absolute;
+	width:300px;
+	height:150px;
+	z-index:1;
+}
+
+#logo
+{
+	background-color:#FFFFFF;
+	width:1000px;
+	height:200px;
+	z-index:0;
+}
+
+#background
+{
+	background-color:#ADADAD;
+	position:relative;
+	text-align:center;
+	height:500px;
+	width:600px;
+	margin: 0 auto;
+	z-index:1;
+}
+
+
+
