@@ -54,6 +54,8 @@ elif form.has_key("filename"):
         fout.close()
         botnet = apd_sandbox.sandbox(sandbox_path + "/samples/" + sample_name, 5, pre=sandbox_path + '/')
         if(xml == "1"):
+            print "Content-type: text/xml"
+            print 
             print botnet.toxml()
         else:
             print "Content-type: text/html"
