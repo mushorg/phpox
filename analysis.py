@@ -4,10 +4,9 @@ to xml document.
 """
 
 import hashlib
-import cgi
+import string
 from datetime import datetime
-from xml.dom.minidom import Document
-
+from lxml import etree
 
 class Botnet(object):
     """  this class contains irc bot info"""
@@ -25,75 +24,81 @@ class Botnet(object):
         self.irc_nickserv = ""
         self.irc_notice = []
         self.irc_privmsg = []
+    def replace_control(self, s):
+        new_s = ''
+        for c in s: #replace all control charactors.
+            #XXX: this algorithm waste much computational time.
+            if c in string.printable:
+                new_s += c
+            else:
+                new_s += '\\%X' % ord(c)
+        return new_s
 
     def toxml(self):
-        doc = Document()
-        xml = doc.createElement('xml')
-        doc.appendChild(xml)
-        first_analysis_date = doc.createElement('first_analysis_date')
-        xml.appendChild(first_analysis_date)
-        first_analysis_date.appendChild(doc.createTextNode(self.first_analysis_date))
-        last_analysis_date = doc.createElement('last_analysis_date')
-        xml.appendChild(last_analysis_date)
-        last_analysis_date.appendChild(doc.createTextNode(self.last_analysis_date))
-        file_md5 = doc.createElement('file_md5')
-        xml.appendChild(file_md5)
-        file_md5.appendChild(doc.createTextNode(self.file_md5));
-        bot = doc.createElement('bot')
-        xml.appendChild(bot)
-        host = doc.createElement('host')
-        bot.appendChild(host)
+        xml = etree.Element('xml')
+        first_analysis_date = etree.Element('first_analysis_date')
+        xml.append(first_analysis_date)
+        first_analysis_date.text = self.first_analysis_date
+        last_analysis_date = etree.Element('last_analysis_date')
+        xml.append(last_analysis_date)
+        last_analysis_date.text = self.last_analysis_date
+        file_md5 = etree.Element('file_md5')
+        xml.append(file_md5)
+        file_md5.text = self.file_md5
+        bot = etree.Element('bot')
+        xml.append(bot)
+        host = etree.Element('host')
+        bot.append(host)
         if( len(self.irc_addr) > 0):
-            host.appendChild(doc.createTextNode(self.irc_addr))
-        irc_server_pwd = doc.createElement('irc_server_pwd')
-        bot.appendChild(irc_server_pwd)
+            host.text = self.irc_addr
+        irc_server_pwd = etree.Element('irc_server_pwd')
+        bot.append(irc_server_pwd)
         if( len(self.irc_server_pwd) > 0):
-            irc_server_pwd.appendChild(doc.createTextNode(self.irc_server_pwd))
-        irc_nick = doc.createElement('irc_nick')
-        bot.appendChild(irc_nick)
+             irc_server_pwd.text = etree.CDATA(self.irc_server_pwd)
+        irc_nick = etree.Element('irc_nick')
+        bot.append(irc_nick)
         if( len(self.irc_nick) > 0):
-            irc_nick.appendChild(doc.createTextNode(self.irc_nick))
-        irc_user = doc.createElement('irc_user')
-        bot.appendChild(irc_user)
+            irc_nick.text = etree.CDATA(self.irc_nick)
+        irc_user = etree.Element('irc_user')
+        bot.append(irc_user)
         if( len(self.irc_user) > 0):
-            irc_user.appendChild(doc.createTextNode(self.irc_user))
-        irc_mode = doc.createElement('irc_mode')
-        bot.appendChild(irc_mode)
+            irc_user.text = self.irc_user
+        irc_mode = etree.Element('irc_mode')
+        bot.append(irc_mode)
         if(len(self.irc_mode)>0):
-            irc_mode.appendChild(doc.createTextNode(self.irc_mode))
-        irc_nickserv = doc.createElement('irc_nickserv')
-        bot.appendChild(irc_nickserv)
+            irc_mode.text = self.irc_mode
+        irc_nickserv = etree.Element('irc_nickserv')
+        bot.append(irc_nickserv)
         if(len(self.irc_nickserv)> 0):
-            irc_nickserv.appendChild(doc.createTextNode(self.irc_nickserv))
-        irc_channels = doc.createElement('irc_channels')
-        bot.appendChild(irc_channels)
+            irc_nickserv.text = etree.CDATA(irc_nickserv)
+        irc_channels = etree.Element('irc_channels')
+        bot.append(irc_channels)
         if( len(self.irc_channel) > 0):
             for i in self.irc_channel:
-                irc_channel = doc.createElement('irc_channel')
-                irc_channels.appendChild(irc_channel)
-                irc_channel.appendChild(doc.createTextNode(i))
+                irc_channel = etree.Element('irc_channel')
+                irc_channels.append(irc_channel)
+                irc_channel.text = self.replace_control(i)
         else:
-            irc_channels.appendChild(doc.createElement('irc_channel'))
-        irc_notices = doc.createElement('irc_notices')
-        bot.appendChild(irc_notices)
+            irc_channels.append(etree.Element('irc_channel'))
+        irc_notices = etree.Element('irc_notices')
+        bot.append(irc_notices)
         if( len(self.irc_notice) > 0):
             for i in self.irc_notice:
-                irc_notice = doc.createElement('irc_notice')
-                irc_notices.appendChild(irc_notice)
-                irc_notice.appendChild(doc.createTextNode(i))
+                irc_notice = etree.Element('irc_notice')
+                irc_notices.append(irc_notice)
+                irc_notice.text = i
         else:
-            irc_notices.appendChild(doc.createElement('irc_notice'))
-        irc_privmsgs = doc.createElement('irc_privmsgs')
-        bot.appendChild(irc_privmsgs)
+            irc_notices.append(etree.Element('irc_notice'))
+        irc_privmsgs = etree.Element('irc_privmsgs')
+        bot.append(irc_privmsgs)
         if( len(self.irc_privmsg) > 0):
             for i in self.irc_privmsg:
-                irc_privmsg = doc.createElement('irc_privmsg')
-                irc_privmsgs.appendChild(irc_privmsg)
-                irc_privmsg.appendChild(doc.createTextNode(i.decode('ascii', 'ignore')))
+                irc_privmsg = etree.Element('irc_privmsg')
+                irc_privmsgs.append(irc_privmsg)
+                irc_privmsg.text = etree.CDATA(self.replace_control(i))
         else:
-            irc_privmsgs.appendChild(doc.createElement('irc_privmsg'))
-        return doc.toprettyxml(indent = " ")
-
+            irc_privmsgs.append(etree.Element('irc_privmsg'))
+        return etree.tostring(xml, encoding="UTF-8", method='xml', xml_declaration=True)
 
 class DataAnalysis(object):
     """this class is used to extracts raw sandbox data to useful info for us"""
@@ -106,10 +111,10 @@ class DataAnalysis(object):
             if( self.debug_level> 0):
                 print repr(line)
             line = line.decode("windows-1252")
-            print line
-            if line[:9] == "MALICIOUS":
-                print "Malicious call", line[8:] 
-            elif line[:4] == "ADDR":
+            #print line
+            #if line[:9] == "MALICIOUS":
+            #    print "Malicious call", line[8:] 
+            if line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
             elif line[:4] == "PASS":
                 self.botnet.irc_server_pwd = line[5:]
