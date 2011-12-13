@@ -27,7 +27,6 @@ FUNCTIONS = {
              "is_callable;" : "\treturn true;",
              """"mail;$to;$subject;string;$message;": mail.call(),"""
              "php_uname;" : php_uname.call(), 
-             "extension_loaded;" : extension_loaded.call(),
              "dl;" : dl.call(),
              "passthru;$cmd;&$ret;" : passthru.call(),
              "popen;$cmd;" : popen.call(),
