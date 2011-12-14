@@ -2,7 +2,7 @@
 def call():
     # TODO: Make uptime dynamic
     function = """
-    echo "SYSTEM $cmd";
+    echo "SYSTEM $cmd\\n";
     $ret =  shell_sandbox($cmd);
     return $ret;
     """
