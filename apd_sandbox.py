@@ -22,8 +22,7 @@ import getopt
 VERSION = '1.0'
 DEBUG_LEVEL = 0
 
-def killer(proc, secs):
-    time.sleep(secs)
+def killer(proc): 
     try:
         proc.kill()
     except OSError:
@@ -85,8 +84,10 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
             print "Sandbox running..."
     stdout_value = ""
     try:
-        threading.Thread(target=partial(killer, proc_sandbox, secs)).start()
+        timer = threading.Timer(secs, killer, (proc_sandbox,))
+        timer.start()
         stdout_value = proc_sandbox.communicate()[0]
+        timer.cancel()
     except Exception as e:
         proc_listener.kill()
         print "Communication error:", e.message
