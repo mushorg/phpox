@@ -3,7 +3,7 @@ apd_functions.py holds information for which function to be replaced.
 """
 
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
-from replacement import fgets, php_uname, extension_loaded, dl
+from replacement import fgets, php_uname, extension_loaded, dl, mail
 import random
 
 freespace = str(random.randint(53687091200, 322122547200))
@@ -25,7 +25,7 @@ FUNCTIONS = {
              "ini_get;$varname;" : ini_get.call(), 
              "is_writable;" : "\treturn true;", 
              "is_callable;" : "\treturn true;",
-             """"mail;$to;$subject;string;$message;": mail.call(),"""
+             "mail;$to;$subject;$message;": mail.call(),
              "php_uname;" : php_uname.call(), 
              "dl;" : dl.call(),
              "passthru;$cmd;&$ret;" : passthru.call(),

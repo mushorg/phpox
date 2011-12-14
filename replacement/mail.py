@@ -11,8 +11,7 @@ headers = Parser().parsestr('From: <user@example.com>\n'
 #print 'message: %s' % headers['message']
 def call():
     ret = """
-    \t string {0} , string {1} , string {2}, string {3}
-    """.format(headers['to'], headers['From'],headers['Subject'], headers['Message'])
-    print ret
-    return bool(ret)
-print call()
+    echo "MAIL $to $subject $message\\n";
+    return TRUE;
+    """
+    return ret
