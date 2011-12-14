@@ -12,13 +12,11 @@ import apd_sandbox
 def form_body():
     return """
     <form action="submit.py" method="POST" enctype="multipart/form-data">
-    <div id = "background" align="center">
     <input type="file"  name="filename" />
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <input type="radio" name="xml" value="0" checked> <font color="#EEEE00"><b>HTML</b></font></input>
-    <input type="radio" name="xml" value="1"><font color="#EEEE00"><b>XML</intput>
-    <p/><input type="submit" name="submit" />
-    </div>
+    <p/><input type="radio" name="xml" value="0" checked><b>HTML</b></font></input>
+    <input type="radio" name="xml" value="1"><b>XML</intput>
+    <input type="submit" name="submit" />
     </form>
     """
 
@@ -30,15 +28,14 @@ if not form:
     print """
     <html>
     <head><title>Test upload pages</title></head>
-    <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
-    <body  align="center" style="background-color:#FFFFFF"; >
-    <div id = "background" height="200px" width="700px"  align="center" >
-        <div id="sandboxlogo" >
-             <img height="125px" width="250px" src="../images/PHP_SandBox_log.png"/>   
-             <img height="125px" width="600px" src="../images/load.png"/><p/>
-        </div> 
-    </div> 
-    """ + form_body() + """
+    <body >          
+     <div id = "logo" style="text-align:left;position:relative;top:-10px;">
+         <img height="250px" width="350px" src="../images/Logo.png"/>   
+     </div> 
+     <div id = "upload" style="text-align:center; position:relative;top:-200px;" > 
+     <p /><br />""" + form_body() + """
+    </div>
+    
     </body>
     </html>
     """
@@ -60,10 +57,16 @@ elif form.has_key("filename"):
         else:
             print "Content-type: text/html"
             print 
-            print "<html>"
-            print "<body>"
+            print "<html><head><title>Test upload pages</title></head>"
+            print "<body><div style=width:100%;border:blue 1px solid>"
+            print "<div id = 'logo' style='text-align:left;'>"
+            print "<img height='200px' width='300px' src='../images/Logo.png'/></div>" 
+            print "<div id = 'upload' style='text-align:center; position:relative;top:-200px;' > "
+            print "<p /><br />"
             print form_body()
-            print "first analysis date: %s<br />" % botnet.first_analysis_date
+            print "</div>"
+            print "<div id = 'data' style='text-align:left; position:relative;top:-150px;' > "
+            print "<p /><p/>first analysis date: %s<br />" % botnet.first_analysis_date
             print "last analysis date: %s<br />" % botnet.last_analysis_date
             print "file md5: %s<br />" % botnet.file_md5
             print "irc_addr: %s<br />" % botnet.irc_addr
@@ -78,5 +81,5 @@ elif form.has_key("filename"):
                 print "irc_notice: %s<br />" %i
             for i in botnet.irc_privmsg :
                 print "privmsg: %s<br />" % i
-            print "</body>"
+            print "</div></body>"
             print "</html>"
