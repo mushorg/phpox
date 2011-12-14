@@ -3,7 +3,7 @@ apd_functions.py holds information for which function to be replaced.
 """
 
 from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
-from replacement import fgets, php_uname, extension_loaded, dl, mail
+from replacement import fgets, php_uname, extension_loaded, dl, mail, function_exists
 import random
 
 freespace = str(random.randint(53687091200, 322122547200))
@@ -15,7 +15,7 @@ FUNCTIONS = {
              "exec;$cmd;&$ret;" : execute.call(),
              "extension_loaded;$name" : extension_loaded.call(),
              "fgets;$handle;$length;" : fgets.call(),
-             #"function_exists;" : "\treturn true;",
+             "function_exists;$name;" : function_exists.call(),
              "fsockopen;$hostname;$port;$errno;$errstr;$timeout;" : fsockopen.call(), 
              "getcwd;" : "\treturn '%s';" % "/var/www",
              "getenv;$varname;" : getenv.call(),
