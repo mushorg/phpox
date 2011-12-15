@@ -9,6 +9,7 @@ import sys
 import time
 import subprocess
 import threading
+import sqlite3
 from functools import partial
 #import classifier.classification
 
@@ -44,6 +45,30 @@ def detect_language(script):
     lang_classifier = lang_detection.LangClassifier()
     language = lang_classifier.classify(open(script, "r").read())
     return language
+
+def analysis_check(sample):
+    analyze = 0
+    threshold_hr = 10
+    conn = sqlite3.connect('sandbox.db')
+    curs = conn.cursor()
+    curs.execute("SELECT DISTINCT file_md5 FROM botnets")
+    filehash = [str(row[0]) for row in curs.fetchall()]
+    try:
+        #sample analyzed before
+        if filehash.index(sample) >= 0:
+            curs.execute("SELECT (strftime('%s','now','localtime')-strftime('%s',last_analysis_date)) /3600 AS period_hr "\
+                         "FROM botnets WHERE file_md5 = :sample "\
+                         "AND last_analysis_date = (SELECT MAX(last_analysis_date) FROM botnets WHERE file_md5 =:sample )",{"sample": sample})
+            for row in curs:
+                if row[0] > threshold_hr:
+                    analyze = 1
+    except Exception:
+        analyze = 1
+        print "Sample file has not been analyzed before."
+    curs.close()
+    conn.commit()
+    conn.close()
+    return analyze
 
 def sandbox(script, secs, pre=os.getcwd() + '/'):
     #language = detect_language(script)
@@ -117,11 +142,12 @@ if __name__ == '__main__':
         #classifier.classification.classifier_start(opts[1][0])
         sandbox(opts[1][0], secs)
     except(IndexError):
-        sample_list = os.listdir("samples/get")
-        random.shuffle(sample_list)
-        for sample in sample_list:
-            scriptclass=classifier.classification.classifier_start("samples/get/" + sample)
-            sandbox("samples/get/" + sample, secs)
-            
-            raw_input("Enter to continue")
-
+        while True:
+            sample_list = os.listdir("samples/get")
+            random.shuffle(sample_list)
+            for sample in sample_list:
+                #scriptclass=classifier.classification.classifier_start("samples/get/" + sample)
+                if analysis_check(sample) == 1:
+                    sandbox("samples/get/" + sample, secs)
+            print "This round is over. Next round will start after 10 seconds... ^.<"
+            time.sleep(10)
