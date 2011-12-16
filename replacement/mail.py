@@ -5,9 +5,10 @@
         #'Subject: Test message\n'
         #'Message: Send Successfully\n')
 
-def call():
-    ret = """
-    \treturn TRUE;
-    """
-    return ret
-print call()
+def call(): 
+    function = """
+    \t$function_name = "mail_" . $rand;
+    \t\treturn $function_name;
+    """ 
+    return function 
+#print call()
