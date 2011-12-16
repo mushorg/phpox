@@ -24,6 +24,25 @@ class Botnet(object):
         self.irc_nickserv = ""
         self.irc_notice = []
         self.irc_privmsg = []
+        
+    def todict(self):
+        botnet_dict = {
+                       'file_name' : self.file_name,
+                       'file_md5' : self.file_md5,
+                       'first_analysis_date' : self.first_analysis_date,
+                       'last_analysis_date' : self.last_analysis_date,
+                       'irc_addr' : self.irc_addr,
+                       'irc_server_pwd' : self.irc_server_pwd,
+                       'irc_nick' : self.irc_nick,
+                       'irc_user' : self.irc_user,
+                       'irc_mode' : self.irc_mode,
+                       'irc_channel' : self.irc_channel,
+                       'irc_nickserv' : self.irc_nickserv,
+                       'irc_notice' : self.irc_notice,
+                       'irc_privmsg' : self.irc_privmsg
+                       }
+        return botnet_dict
+        
     def replace_control(self, s):
         new_s = ''
         for c in s: #replace all control charactors.
@@ -54,7 +73,7 @@ class Botnet(object):
         irc_server_pwd = etree.Element('irc_server_pwd')
         bot.append(irc_server_pwd)
         if( len(self.irc_server_pwd) > 0):
-             irc_server_pwd.text = etree.CDATA(self.irc_server_pwd)
+            irc_server_pwd.text = etree.CDATA(self.irc_server_pwd)
         irc_nick = etree.Element('irc_nick')
         bot.append(irc_nick)
         if( len(self.irc_nick) > 0):

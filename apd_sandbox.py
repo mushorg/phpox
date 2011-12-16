@@ -11,14 +11,16 @@ import subprocess
 import threading
 import sqlite3
 from functools import partial
-#import classifier.classification
+import getopt
+import json
 
 import analysis
 import log_sqlite
 from lang import lang_detection
 import listener
+import report.hp_feed
+#import classifier.classification
 
-import getopt
 
 VERSION = '1.0'
 DEBUG_LEVEL = 0
@@ -71,6 +73,7 @@ def analysis_check(sample):
     return analyze
 
 def sandbox(script, secs, pre=os.getcwd() + '/'):
+    feeder = report.hp_feed.HPFeedClient(pre)
     #language = detect_language(script)
     #pre = os.getcwd().rsplit("/",1)[0] + "/"
     if DEBUG_LEVEL > 0:
@@ -89,7 +92,7 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
         t.start()"""
         if DEBUG_LEVEL > 0:
             print pre+"listener.php"
-        proc_listener = subprocess.Popen(["php", pre+"listener.php"], shell = False)
+        proc_listener = subprocess.Popen(["php", pre + "listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:
@@ -122,6 +125,8 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
         botnet = analyzer.analyze(stdout_value)
         logger = log_sqlite.LogSQLite()
         logger.insert(botnet)
+        feeder.handle_send('glastopf.sandbox', json.dumps(botnet.todict()))
+        feeder.close()
         #print language
         #print stdout_value
         if DEBUG_LEVEL > 0:

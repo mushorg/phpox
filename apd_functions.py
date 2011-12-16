@@ -25,7 +25,7 @@ FUNCTIONS = {
              "ini_get;$varname;" : ini_get.call(), 
              "is_writable;" : "\treturn true;", 
              "is_callable;" : "\treturn true;",
-             "mail;$to;$subject;$message;": mail.call(),
+             #"mail;$to;$subject;$message;": mail.call(),
              "php_uname;" : php_uname.call(), 
              "dl;" : dl.call(),
              "passthru;$cmd;&$ret;" : passthru.call(),
