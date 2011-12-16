@@ -57,10 +57,11 @@ elif form.has_key("filename"):
             print "Content-type: text/html"
             print 
             print "<html><head><title>Test Upload page</title></head>"
-            print "<body><div style=width:70%;border:blue 1px solid>"
-            print "<div id = 'logo' style='text-align:left;'>"
-            print "<img height='200px' width='300px' src='../images/Logo.png'/></div>" 
-            print "<div id = 'upload' style='text-align:center; position:relative;top:-200px;' > "
+            print "<body>"
+            print "<div id = 'logo' style='text-align:left;position:relative;top:-10px;'>"
+            print "<img height='250px' width='350px' src='../images/Logo.png'/>"
+            print "</div>" 
+            print "<div id = 'upload' style='text-align:center; position:relative;top:-200px;' >"
             print "<p /><br />"
             print form_body()
             print "</div>"
@@ -80,5 +81,5 @@ elif form.has_key("filename"):
                 print "irc_notice: %s<br />" %i
             for i in botnet.irc_privmsg :
                 print "privmsg: %s<br />" % i
-            print "</div></body>"
+            print "</body>"
             print "</html>"
