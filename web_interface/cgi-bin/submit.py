@@ -13,8 +13,7 @@ def form_body():
     return """
     <form action="submit.py" method="POST" enctype="multipart/form-data">
     <input type="file"  name="filename" />
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <p/><input type="radio" name="xml" value="0" checked><b>HTML</b></font></input>
+    <input type="radio" name="xml" value="0" checked><b>HTML</b></font></input>
     <input type="radio" name="xml" value="1"><b>XML</intput>
     <input type="submit" name="submit" />
     </form>
@@ -57,16 +56,16 @@ elif form.has_key("filename"):
         else:
             print "Content-type: text/html"
             print 
-            print "<html><head><title>Test upload pages</title></head>"
-            print "<body><div style=width:100%;border:blue 1px solid>"
+            print "<html><head><title>Test Upload page</title></head>"
+            print "<body><div style=width:70%;border:blue 1px solid>"
             print "<div id = 'logo' style='text-align:left;'>"
             print "<img height='200px' width='300px' src='../images/Logo.png'/></div>" 
             print "<div id = 'upload' style='text-align:center; position:relative;top:-200px;' > "
             print "<p /><br />"
             print form_body()
             print "</div>"
-            print "<div id = 'data' style='text-align:left; position:relative;top:-150px;' > "
-            print "<p /><p/>first analysis date: %s<br />" % botnet.first_analysis_date
+            print "<div id = 'data' style='text-align:left; position:relative;top:-100px;' > "
+            print "first analysis date: %s<br />" % botnet.first_analysis_date
             print "last analysis date: %s<br />" % botnet.last_analysis_date
             print "file md5: %s<br />" % botnet.file_md5
             print "irc_addr: %s<br />" % botnet.irc_addr
