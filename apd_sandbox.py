@@ -148,11 +148,11 @@ if __name__ == '__main__':
         sandbox(opts[1][0], secs)
     except(IndexError):
         while True:
-            sample_list = os.listdir("samples/get")
+            sample_list = os.listdir("samples/")
             random.shuffle(sample_list)
             for sample in sample_list:
                 #scriptclass=classifier.classification.classifier_start("samples/get/" + sample)
                 if analysis_check(sample) == 1:
-                    sandbox("samples/get/" + sample, secs)
-            print "This round is over. Next round will start after 10 seconds... ^.<"
-            time.sleep(10)
+                    sandbox("samples/" + sample, secs)
+            print "This round is over. Next round will start after 10 minutes... ^.<"
+            time.sleep(10*60)

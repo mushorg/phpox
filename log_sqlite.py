@@ -24,15 +24,15 @@ class LogSQLite(object):
                 irc_nickserv TEXT,
                 irc_notice TEXT,
                 irc_privmsg TEXT,
-                first_analysis_date TEXT,
-                last_analysis_date TEXT)
+                first_analysis TEXT,
+                last_analysis TEXT)
                 """)
         self.connection.commit()
         self.cursor.close()
         
     def check_md5(self, botnet):
         self.cursor = self.connection.cursor()
-        self.cursor.execute("""SELECT first_analysis_date FROM botnets WHERE file_md5 == ?""", (botnet.file_md5,))
+        self.cursor.execute("""SELECT first_analysis FROM botnets WHERE file_md5 == ?""", (botnet.file_md5,))
         date = self.cursor.fetchone()
         self.cursor.close()
         return date

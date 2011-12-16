@@ -129,8 +129,11 @@ class DataAnalysis(object):
         for line in output.split("\n"):
             if( self.debug_level> 0):
                 print repr(line)
-            line = line.decode("windows-1252")
-            #print line
+            try:
+	    	line = line.decode("windows-1252")
+            except(UnicodeDecodeError):
+		continue
+	    #print line
             #if line[:9] == "MALICIOUS":
             #    print "Malicious call", line[8:] 
             if line[:4] == "ADDR":
