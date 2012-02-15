@@ -16,6 +16,9 @@ class HPFeedsSink(object):
         self.ident = ''
         self.secret = ''
 
+    def log(self, msg):
+        print '[feedcli] {0}'.format(msg) 
+
     def get_filename(self, injected_file):
         file_name = hashlib.md5(injected_file).hexdigest()
         return file_name
