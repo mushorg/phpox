@@ -78,14 +78,14 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
     try:
         if DEBUG_LEVEL > 0:
             print pre+"listener.php"
-        proc_listener = subprocess.Popen(["php", pre + "listener.php"], shell = False)
+        proc_listener = subprocess.Popen(["php5-cgi", pre + "listener.php"], shell = False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:
         if DEBUG_LEVEL > 0:
             print "Listener running..."
     try:
-        proc_sandbox = subprocess.Popen(["php", pre+"apd_sandbox.php", script], 
+        proc_sandbox = subprocess.Popen(["php5-cgi", pre+"apd_sandbox.php", script], 
                 shell = False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
