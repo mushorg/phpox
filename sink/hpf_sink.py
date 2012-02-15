@@ -48,7 +48,7 @@ def run():
             print "New file:", file_name
             sandbox.sandbox('files/' + file_name)
 
-    def on_error(self, payload):
+    def on_error(payload):
         print >>sys.stderr, ' -> errormessage from server: {0}'.format(payload)
         hpc.stop()
 

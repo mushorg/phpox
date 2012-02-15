@@ -121,7 +121,7 @@ class HPC(object):
                         ident, rest = rest[1:1+ord(rest[0])], buffer(rest, 1+ord(rest[0]))
                         chan, content = rest[1:1+ord(rest[0])], buffer(rest, 1+ord(rest[0]))
 
-                        message_callback(self, str(ident), str(chan), content)
+                        message_callback(str(ident), str(chan), content)
                     elif opcode == OP_ERROR:
                         error_callback(data)
 
