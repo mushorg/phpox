@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-"""apd_sandbox.py
-apd_sandbox.py runs the replaced php function, it is also the main 
-function of the sandbox. 
-"""
+
 import random
 import os
 import sys
@@ -19,8 +16,6 @@ import log_sqlite
 from lang import lang_detection
 import listener
 import report.hp_feed
-#import classifier.classification
-
 
 VERSION = '1.0'
 DEBUG_LEVEL = 0
@@ -74,22 +69,13 @@ def analysis_check(sample):
 
 def sandbox(script, secs, pre=os.getcwd() + '/'):
     feeder = report.hp_feed.HPFeedClient(pre)
-    #language = detect_language(script)
-    #pre = os.getcwd().rsplit("/",1)[0] + "/"
     if DEBUG_LEVEL > 0:
         print "\n PRE: ", pre, "\n"
         stderr_opt = None
     else:
         stderr_opt = subprocess.PIPE
 
-        #if language == "php":
-            #php_tag_check(script)
     try:
-        """fake_listener = listener.FakeListener()
-        server = fake_listener.main(script)
-        t = threading.Thread(target=server.serve_forever)
-        t.setDaemon(True)
-        t.start()"""
         if DEBUG_LEVEL > 0:
             print pre+"listener.php"
         proc_listener = subprocess.Popen(["php", pre + "listener.php"], shell = False)
@@ -136,23 +122,14 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
 if __name__ == '__main__':
     if DEBUG_LEVEL > 0:
         print "\nPHP sandbox version: %s\n" % VERSION
-    secs = 10
-
     opts = getopt.getopt(sys.argv[1:], "v", [])
     for i in opts[0]:
         if i[0] == '-v' :
             DEBUG_LEVEL += 1
-
     try:
-        #classifier.classification.classifier_start(opts[1][0])
-        sandbox(opts[1][0], secs)
+        sandbox(opts[1][0], secs=10)
     except(IndexError):
-        while True:
-            sample_list = os.listdir("samples/")
-            random.shuffle(sample_list)
-            for sample in sample_list:
-                #scriptclass=classifier.classification.classifier_start("samples/get/" + sample)
-                if analysis_check(sample) == 1:
-                    sandbox("samples/" + sample, secs)
-            print "This round is over. Next round will start after 10 minutes... ^.<"
-            time.sleep(10*60)
+        if DEBUG_LEVEL > 0:
+            print "Specify the file to analyze..."
+        else:
+            pass
