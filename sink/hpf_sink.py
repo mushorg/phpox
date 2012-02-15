@@ -17,7 +17,7 @@ class HPFeedsSink(object):
         self.secret = ''
 
     def log(self, msg):
-        print '[feedcli] {0}'.format(msg) 
+        print '[feedcli] {0}'.format(msg)
 
     def get_filename(self, injected_file):
         file_name = hashlib.md5(injected_file).hexdigest()
@@ -31,7 +31,7 @@ class HPFeedsSink(object):
                 self.log('File written to diks: {0}'.format(file_name))
         else:
             self.log('File already exists: {0}'.format(file_name))
-            file_name = False
+        return file_name
 
 
 def run():
