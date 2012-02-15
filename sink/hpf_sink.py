@@ -1,6 +1,7 @@
 import sys
 import hashlib
 import os
+import base64
 
 import sink.hpfeeds as hpfeeds
 import apd_sandbox as sandbox
@@ -40,7 +41,8 @@ class HPFeedsSink(object):
 
         def on_message(self, identifier, channel, payload):
             if channel == "glastopf.files":
-                file_name = self.store_file(str(payload).split(' ', 1)[1])
+                file_name = self.store_file(
+                        base64.b64decode(str(payload).split(' ', 1)[1]))
                 print "New file:", file_name
                 sandbox.sandbox('files/' + file_name)
 
