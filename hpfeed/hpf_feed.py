@@ -19,28 +19,28 @@ class HPFeedClient(object):
         self.secret = conf_parser.get("hpfeed", "secret").encode('latin1')
 
     def log(self, msg):
-        print '[feedcli] {0}'.format(msg)
+        print '[hpf feed] {0}'.format(msg)
 
     def run(self):
         try:
             self.hpc = hpfeeds.new(self.host, self.port, self.ident, self.secret)
         except hpfeeds.FeedException, e:
-            print >>sys.stderr, 'feed exception:', e
+            self.log('Feed exception: %s' % e)
             return 1
 
-        print >>sys.stderr, 'connected to', self.hpc.brokername
+        self.log('Connected to: %s' % self.hpc.brokername)
 
         def on_message(identifier, channel, payload):
             pass
 
         def on_error(payload):
-            print ' -> errormessage from server: {0}'.format(payload)
+            self.log('Error message from server: {0}'.format(payload))
             self.hpc.stop()
 
         try:
             self.hpc.run(on_message, on_error)
         except hpfeeds.FeedException, e:
-            print >>sys.stderr, 'feed exception:', e
+            self.log('Feed exception: %s' % e)
         except KeyboardInterrupt:
             pass
         finally:
@@ -49,6 +49,7 @@ class HPFeedClient(object):
 
     def publish(self, channel, data):
         self.hpc.publish(channel, data)
+        self.log('Analysis data published to feed')
         self.hpc.stop()
 
 if __name__ == '__main__':
