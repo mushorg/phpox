@@ -1,6 +1,6 @@
 import sys
 
-import sink.hpf_sink as hpf_sink
+import hpfeed.hpf_sink as hpf_sink
 
 
 def main():

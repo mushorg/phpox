@@ -11,7 +11,7 @@ import json
 import analysis
 import log_sqlite
 from lang import lang_detection
-import report.hp_feed
+import hpfeed.hpf_feed as hpf_feed
 
 
 class PHPSandbox(object):
@@ -19,7 +19,7 @@ class PHPSandbox(object):
     def __init__(self, pre=os.getcwd() + '/'):
         self.pre = pre
         self.DEBUG_LEVEL = 0
-        self.feeder = report.hp_feed.HPFeedClient(pre)
+        self.feeder = hpf_feed.HPFeedClient(pre)
 
     def killer(self, proc):
         try:
@@ -112,7 +112,7 @@ class PHPSandbox(object):
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
             logger.insert(botnet)
-            self.feeder.handle_send('glastopf.sandbox',
+            self.feeder.publish('glastopf.sandbox',
                                     json.dumps(botnet.todict()))
             if self.DEBUG_LEVEL > 0:
                 print "Parsed with sandbox"
