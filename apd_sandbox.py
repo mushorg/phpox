@@ -20,6 +20,7 @@ class PHPSandbox(object):
         self.pre = pre
         self.DEBUG_LEVEL = 0
         self.feeder = hpf_feed.HPFeedClient(pre)
+        self.feeder.run()
 
     def killer(self, proc):
         try:
