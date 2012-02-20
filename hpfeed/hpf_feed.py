@@ -51,6 +51,7 @@ class HPFeedClient(object):
         self.hpc.publish(channel, data)
         self.log('Analysis data published to feed')
         self.hpc.stop()
+        self.hpc.close()
 
 if __name__ == '__main__':
     hs = HPFeedClient('../')

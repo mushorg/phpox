@@ -129,8 +129,6 @@ class HPC(object):
                     break
             if self.stopped:
                 break
-            self.connect()
-        self.close()
 
     def subscribe(self, chaninfo):
         if type(chaninfo) == str:
