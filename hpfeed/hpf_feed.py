@@ -37,7 +37,6 @@ class HPFeedClient(object):
             print ' -> errormessage from server: {0}'.format(payload)
             self.hpc.stop()
 
-        self.hpc.subscribe(self.channels)
         try:
             self.hpc.run(on_message, on_error)
         except hpfeeds.FeedException, e:
@@ -52,7 +51,7 @@ class HPFeedClient(object):
         self.hpc.publish(channel, data)
 
 if __name__ == '__main__':
-    hs = HPFeedsSink()
+    hs = HPFeedClient('../')
     try:
         sys.exit(hs.run())
     except KeyboardInterrupt:
