@@ -20,7 +20,6 @@ class PHPSandbox(object):
         self.pre = pre
         self.DEBUG_LEVEL = 0
         self.feeder = hpf_feed.HPFeedClient(pre)
-        self.feeder.run()
 
     def killer(self, proc):
         try:
@@ -113,6 +112,7 @@ class PHPSandbox(object):
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
             logger.insert(botnet)
+            self.feeder.run()
             self.feeder.publish('glastopf.sandbox',
                                     json.dumps(botnet.todict()))
             if self.DEBUG_LEVEL > 0:

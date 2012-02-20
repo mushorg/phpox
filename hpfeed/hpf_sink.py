@@ -48,6 +48,7 @@ class HPFeedsSink(object):
             if channel == "glastopf.files":
                 file_name = hps.store_file(
                         base64.b64decode(str(payload).split(' ', 1)[1]))
+                print "new file", file_name
                 self.sb.sandbox('files/' + file_name, 10)
 
         def on_error(c_self, payload):

@@ -49,6 +49,7 @@ class HPFeedClient(object):
 
     def publish(self, channel, data):
         self.hpc.publish(channel, data)
+        self.hpc.stop()
 
 if __name__ == '__main__':
     hs = HPFeedClient('../')
