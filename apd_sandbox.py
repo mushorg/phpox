@@ -20,11 +20,13 @@ import report.hp_feed
 VERSION = '1.0'
 DEBUG_LEVEL = 0
 
+
 def killer(proc): 
     try:
         proc.kill()
     except OSError:
         pass
+
 
 def php_tag_check(script):
     check_file = open(script, "r+")
@@ -38,10 +40,12 @@ def php_tag_check(script):
     check_file.close()
     return script
 
+
 def detect_language(script):
     lang_classifier = lang_detection.LangClassifier()
     language = lang_classifier.classify(open(script, "r").read())
     return language
+
 
 def analysis_check(sample):
     analyze = 0
@@ -67,6 +71,7 @@ def analysis_check(sample):
     conn.close()
     return analyze
 
+
 def sandbox(script, secs, pre=os.getcwd() + '/'):
     feeder = report.hp_feed.HPFeedClient(pre)
     if DEBUG_LEVEL > 0:
@@ -77,16 +82,17 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
 
     try:
         if DEBUG_LEVEL > 0:
-            print pre+"listener.php"
-        proc_listener = subprocess.Popen(["php5-cgi", pre + "listener.php"], shell = False)
+            print pre + "listener.php"
+        proc_listener = subprocess.Popen(["php5-cgi", pre + "listener.php"],
+                                         shell=False)
     except Exception as e:
         print "Error running the socket listener:", e
     else:
         if DEBUG_LEVEL > 0:
             print "Listener running..."
     try:
-        proc_sandbox = subprocess.Popen(["php5-cgi", pre+"apd_sandbox.php", script], 
-                shell = False,
+        proc_sandbox = subprocess.Popen(["php5-cgi", pre + "apd_sandbox.php", script],
+                shell=False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=stderr_opt,
@@ -118,7 +124,7 @@ def sandbox(script, secs, pre=os.getcwd() + '/'):
         if DEBUG_LEVEL > 0:
             print "Parsed with sandbox"
         return botnet
-    
+
 if __name__ == '__main__':
     if DEBUG_LEVEL > 0:
         print "\nPHP sandbox version: %s\n" % VERSION
