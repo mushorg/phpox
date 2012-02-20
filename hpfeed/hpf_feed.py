@@ -7,10 +7,11 @@ else:
     import hpfeed.hpfeeds as hpfeeds
 
 
-class HPFeedsSink(object):
+class HPFeedClient(object):
 
-    def __init__(self):
+    def __init__(self, pre):
         conf_parser = ConfigParser()
+        conf_parser.read(pre + "apd_sandbox.cfg")
         self.host = conf_parser.get("hpfeed", "host")
         self.port = int(conf_parser.getint("hpfeed", "port"))
         self.channels = conf_parser.get("hpfeed", "chan").encode('latin1').split(',')
