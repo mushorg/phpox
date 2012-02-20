@@ -25,7 +25,7 @@ def msghdr(op, data):
 def msgpublish(ident, chan, data):
     if isinstance(data, str):
         data = data.encode('latin1')
-    return msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident + 
+    return msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident +
                   struct.pack('!B', len(chan)) + chan + data)
 
 
@@ -84,7 +84,7 @@ class HPFeedClient(object):
                     rest = buffer(data, 0)
                     name, rest = rest[1:1 + ord(rest[0])], buffer(rest, 1 + ord(rest[0]))
                     rand = str(rest)
-                    self.socket.send(msgauth(rand, self.options["ident"], 
+                    self.socket.send(msgauth(rand, self.options["ident"],
                                              self.options["secret"]))
                 elif opcode == OP_ERROR:
                     pass

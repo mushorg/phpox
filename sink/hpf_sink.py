@@ -36,6 +36,7 @@ class HPFeedsSink(object):
 
 def run():
     hps = HPFeedsSink()
+    sb = sandbox.PHPSandbox()
     try:
         hpc = hpfeeds.new(hps.host, hps.port, hps.ident, hps.secret)
     except hpfeeds.FeedException, e:
@@ -49,7 +50,7 @@ def run():
             file_name = hps.store_file(
                     base64.b64decode(str(payload).split(' ', 1)[1]))
             print "New file:", file_name
-            sandbox.sandbox('files/' + file_name, 10)
+            sb.sandbox('files/' + file_name, 10)
 
     def on_error(payload):
         print >>sys.stderr, ' -> errormessage from server: {0}'.format(payload)
