@@ -30,9 +30,6 @@ class HPFeedClient(object):
         self.log('Connected to: %s' % self.hpc.brokername)
 
     def publish(self, channel, data):
-        self.log('Trying to publish data')
-        self.hpc.s.send(self.hpc.msgpublish(self.ident, channel, data))
-        self.log('Socket send method successful')
         self.hpc.publish(channel, data)
         self.log('Analysis data published to feed')
 
