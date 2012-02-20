@@ -15,25 +15,6 @@ BUFSIZ = 16384
 __all__ = ["new", "FeedException"]
 
 
-def msghdr(op, data):
-    return struct.pack('!iB', 5 + len(data), op) + data
-
-
-def msgpublish(ident, chan, data):
-    if isinstance(data, str):
-        data = data.encode('latin1')
-    return msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident + struct.pack('!B', len(chan)) + chan + data)
-
-
-def msgsubscribe(ident, chan):
-    return msghdr(OP_SUBSCRIBE, struct.pack('!B', len(ident)) + ident + chan)
-
-
-def msgauth(rand, ident, secret):
-    hash = hashlib.sha1(rand + secret).digest()
-    return msghdr(OP_AUTH, struct.pack('!B', len(ident)) + ident + hash)
-
-
 class FeedUnpack(object):
     def __init__(self):
         self.buf = bytearray()
@@ -51,10 +32,10 @@ class FeedUnpack(object):
         if len(self.buf) < 5:
             raise StopIteration('No message.')
 
-        ml, opcode = struct.unpack('!iB', buffer(self.buf,0,5))
+        ml, opcode = struct.unpack('!iB', buffer(self.buf, 0, 5))
         if len(self.buf) < ml:
             raise StopIteration('No message.')
-        data = bytearray(buffer(self.buf, 5, ml-5))
+        data = bytearray(buffer(self.buf, 5, ml - 5))
         del self.buf[:ml]
         return opcode, data
 
@@ -75,6 +56,24 @@ class HPC(object):
 
         self.connect()
 
+    def msghdr(self, op, data):
+        return struct.pack('!iB', 5 + len(data), op) + data
+
+    def msgpublish(self, ident, chan, data):
+        if isinstance(data, str):
+            data = data.encode('latin1')
+        return self.msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident +
+                           struct.pack('!B', len(chan)) + chan + data)
+
+    def msgsubscribe(self, ident, chan):
+        return self.msghdr(OP_SUBSCRIBE, struct.pack('!B', len(ident)) +
+                           ident + chan)
+
+    def msgauth(self, rand, ident, secret):
+        hash = hashlib.sha1(rand + secret).digest()
+        return self.msghdr(OP_AUTH, struct.pack('!B', len(ident)) +
+                           ident + hash)
+
     def connect(self):
         logger.info('connecting to {0}:{1}'.format(self.host, self.port))
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -94,12 +93,12 @@ class HPC(object):
         for opcode, data in self.unpacker:
             if opcode == OP_INFO:
                 rest = buffer(data, 0)
-                name, rest = rest[1:1+ord(rest[0])], buffer(rest, 1+ord(rest[0]))
+                name, rest = rest[1:1 + ord(rest[0])], buffer(rest, 1 + ord(rest[0]))
                 rand = str(rest)
 
                 logger.debug('info message name: {0}, rand: {1}'.format(name, repr(rand)))
                 self.brokername = name
-                self.s.send(msgauth(rand, self.ident, self.secret))
+                self.s.send(self.msgauth(rand, self.ident, self.secret))
                 break
             else:
                 raise FeedException('Expected info message at this point.')
@@ -134,13 +133,13 @@ class HPC(object):
         if type(chaninfo) == str:
             chaninfo = [chaninfo, ]
         for c in chaninfo:
-            self.s.send(msgsubscribe(self.ident, c))
+            self.s.send(self.msgsubscribe(self.ident, c))
 
     def publish(self, chaninfo, data):
         if type(chaninfo) == str:
             chaninfo = [chaninfo, ]
         for c in chaninfo:
-            self.s.send(msgpublish(self.ident, c, data))
+            self.s.send(self.msgpublish(self.ident, c, data))
 
     def stop(self):
         self.stopped = True
