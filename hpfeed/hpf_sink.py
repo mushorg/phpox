@@ -37,7 +37,7 @@ class HPFeedsSink(object):
     def run(self):
         hps = HPFeedsSink()
         try:
-            hpc = hpfeeds.new(hps.host, hps.port, hps.ident, hps.secret)
+            self.hpc = hpfeeds.new(hps.host, hps.port, hps.ident, hps.secret)
         except hpfeeds.FeedException, e:
             self.log('Feed exception: %s' % e)
             return 1
@@ -55,15 +55,15 @@ class HPFeedsSink(object):
             self.log('Error message from server: {0}'.format(payload))
             self.hpc.stop()
 
-        hpc.subscribe(hps.channels)
+        self.hpc.subscribe(hps.channels)
         try:
-            hpc.run(on_message, on_error)
+            self.hpc.run(on_message, on_error)
         except hpfeeds.FeedException, e:
             self.log('Feed exception: %s' % e)
         except KeyboardInterrupt:
             pass
         finally:
-            hpc.close()
+            self.hpc.close()
         return 0
 
 if __name__ == '__main__':
