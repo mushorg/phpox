@@ -30,8 +30,8 @@ def msgpublish(ident, chan, data):
 
 
 def msgauth(rand, ident, secret):
-    hash = hashlib.sha1(rand + secret).digest()
-    return msghdr(OP_AUTH, struct.pack('!B', len(ident)) + ident + hash)
+    hash_val = hashlib.sha1(rand + secret).digest()
+    return msghdr(OP_AUTH, struct.pack('!B', len(ident)) + ident + hash_val)
 
 
 class FeedUnpack(object):
@@ -82,13 +82,13 @@ class HPFeedClient(object):
             for opcode, data in self.unpacker:
                 if opcode == OP_INFO:
                     rest = buffer(data, 0)
-                    name, rest = rest[1:1 + ord(rest[0])], buffer(rest, 1 + ord(rest[0]))
+                    rest = rest[1:1 + ord(rest[0])]
+                    #name = buffer(rest, 1 + ord(rest[0]))
                     rand = str(rest)
                     self.socket.send(msgauth(rand, self.options["ident"],
                                              self.options["secret"]))
                 elif opcode == OP_ERROR:
-                    pass
-                    #log('errormessage from server: {0}'.format(data))
+                    log('errormessage from server: {0}'.format(data))
             try:
                 data = self.socket.recv(1024)
             except KeyboardInterrupt:
@@ -97,28 +97,27 @@ class HPFeedClient(object):
                 break
 
     def connect(self):
-        #log('Connecting to feed broker...')
+        log('Connecting to feed broker...')
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.settimeout(3)
         try:
             self.socket.connect((self.options["host"], self.options["port"]))
         except:
-            #log('Could not connect to broker.')
+            log('Could not connect to broker.')
             self.socket.close()
         else:
-            pass
-            #log('Connected to hpfeed broker.')
-        #self.socket.settimeout(None)
+            log('Connected to hpfeed broker.')
+        self.socket.settimeout(None)
         self.broker_read()
 
     def handle_send(self, channel, data):
         try:
             self.socket.send(msgpublish(self.options["ident"], channel, data))
         except Exception, e:
-            #log('Connection error: {0}').format(str(e))
+            log('Connection error: {0}').format(str(e))
             self.connect()
             self.socket.send(msgpublish(self.options["ident"], channel, data))
 
     def close(self):
-        #log('Disconnecting.')
+        log('Disconnecting.')
         self.socket.close()
