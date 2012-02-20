@@ -44,13 +44,13 @@ class HPFeedsSink(object):
 
         print >>sys.stderr, 'connected to', hpc.brokername
 
-        def on_message(self, identifier, channel, payload):
+        def on_message(c_self, identifier, channel, payload):
             if channel == "glastopf.files":
                 file_name = hps.store_file(
                         base64.b64decode(str(payload).split(' ', 1)[1]))
                 self.sb.sandbox('files/' + file_name, 10)
 
-        def on_error(self, payload):
+        def on_error(c_self, payload):
             print >>sys.stderr, ' -> errormessage from server: {0}'.format(payload)
             hpc.stop()
 
