@@ -25,13 +25,12 @@ def msghdr(op, data):
 def msgpublish(ident, chan, data):
     if isinstance(data, str):
         data = data.encode('latin1')
-    return msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident +
-                  struct.pack('!B', len(chan)) + chan + data)
+    return msghdr(OP_PUBLISH, struct.pack('!B', len(ident)) + ident + struct.pack('!B', len(chan)) + chan + data)
 
 
 def msgauth(rand, ident, secret):
-    hash_val = hashlib.sha1(rand + secret).digest()
-    return msghdr(OP_AUTH, struct.pack('!B', len(ident)) + ident + hash_val)
+    hash = hashlib.sha1(rand + secret).digest()
+    return msghdr(OP_AUTH, struct.pack('!B', len(ident)) + ident + hash)
 
 
 class FeedUnpack(object):
@@ -51,11 +50,10 @@ class FeedUnpack(object):
         if len(self.buf) < 5:
             raise StopIteration('No message.')
 
-        ml, opcode = struct.unpack('!iB', buffer(self.buf, 0, 5))
+        ml, opcode = struct.unpack('!iB', buffer(self.buf,0,5))
         if len(self.buf) < ml:
             raise StopIteration('No message.')
-
-        data = bytearray(buffer(self.buf, 5, ml - 5))
+        data = bytearray(buffer(self.buf, 5, ml-5))
         del self.buf[:ml]
         return opcode, data
 
@@ -85,6 +83,7 @@ class HPFeedClient(object):
                     rest = rest[1:1 + ord(rest[0])]
                     #name = buffer(rest, 1 + ord(rest[0]))
                     rand = str(rest)
+                    print rand, self.options["ident"], self.options["secret"]
                     self.socket.send(msgauth(rand, self.options["ident"],
                                              self.options["secret"]))
                 elif opcode == OP_ERROR:
