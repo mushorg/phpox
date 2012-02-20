@@ -4,7 +4,8 @@ import hpfeed.hpf_sink as hpf_sink
 
 
 def main():
-    hpf_sink.run()
+    sink = hpf_sink.HPFeedsSink()
+    sink.run()
 
 if __name__ == "__main__":
     try:

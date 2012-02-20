@@ -15,6 +15,7 @@ class HPFeedsSink(object):
         self.channels = ['glastopf.files', ]
         self.ident = ''
         self.secret = ''
+        self.sb = sandbox.PHPSandbox()
 
     def log(self, msg):
         print '[feedcli] {0}'.format(msg)
@@ -33,40 +34,38 @@ class HPFeedsSink(object):
             self.log('File already exists: {0}'.format(file_name))
         return file_name
 
+    def run(self):
+        hps = HPFeedsSink()
+        try:
+            hpc = hpfeeds.new(hps.host, hps.port, hps.ident, hps.secret)
+        except hpfeeds.FeedException, e:
+            print >>sys.stderr, 'feed exception:', e
+            return 1
 
-def run():
-    hps = HPFeedsSink()
-    sb = sandbox.PHPSandbox()
-    try:
-        hpc = hpfeeds.new(hps.host, hps.port, hps.ident, hps.secret)
-    except hpfeeds.FeedException, e:
-        print >>sys.stderr, 'feed exception:', e
-        return 1
+        print >>sys.stderr, 'connected to', hpc.brokername
 
-    print >>sys.stderr, 'connected to', hpc.brokername
+        def on_message(identifier, channel, payload):
+            if channel == "glastopf.files":
+                file_name = hps.store_file(
+                        base64.b64decode(str(payload).split(' ', 1)[1]))
+                self.sb.sandbox('files/' + file_name, 10)
 
-    def on_message(identifier, channel, payload):
-        if channel == "glastopf.files":
-            file_name = hps.store_file(
-                    base64.b64decode(str(payload).split(' ', 1)[1]))
-            sb.sandbox('files/' + file_name, 10)
+        def on_error(payload):
+            print >>sys.stderr, ' -> errormessage from server: {0}'.format(payload)
+            hpc.stop()
 
-    def on_error(payload):
-        print >>sys.stderr, ' -> errormessage from server: {0}'.format(payload)
-        hpc.stop()
-
-    hpc.subscribe(hps.channels)
-    try:
-        hpc.run(on_message, on_error)
-    except hpfeeds.FeedException, e:
-        print >>sys.stderr, 'feed exception:', e
-    except KeyboardInterrupt:
-        pass
-    finally:
-        #cur.close()
-        #conn.close()
-        hpc.close()
-    return 0
+        hpc.subscribe(hps.channels)
+        try:
+            hpc.run(on_message, on_error)
+        except hpfeeds.FeedException, e:
+            print >>sys.stderr, 'feed exception:', e
+        except KeyboardInterrupt:
+            pass
+        finally:
+            #cur.close()
+            #conn.close()
+            hpc.close()
+        return 0
 
 if __name__ == '__main__':
     hs = HPFeedsSink()
