@@ -112,9 +112,10 @@ class PHPSandbox(object):
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
             logger.insert(botnet)
-            self.feeder.run()
+            self.feeder.connect()
             self.feeder.publish('glastopf.sandbox',
                                     json.dumps(botnet.todict()))
+            self.feeder.close()
             if self.DEBUG_LEVEL > 0:
                 print "Parsed with sandbox"
             return botnet
