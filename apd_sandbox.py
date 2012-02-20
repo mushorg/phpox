@@ -1,20 +1,16 @@
 #!/usr/bin/env python
 
-import random
 import os
 import sys
-import time
 import subprocess
 import threading
 import sqlite3
-from functools import partial
 import getopt
 import json
 
 import analysis
 import log_sqlite
 from lang import lang_detection
-import listener
 import report.hp_feed
 
 
