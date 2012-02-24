@@ -5,8 +5,8 @@ to xml document.
 
 import hashlib
 import string
-from datetime import datetime
 from lxml import etree
+
 
 class Botnet(object):
     """  this class contains irc bot info"""
@@ -24,25 +24,25 @@ class Botnet(object):
         self.irc_nickserv = ""
         self.irc_notice = []
         self.irc_privmsg = []
-        
+
     def todict(self):
         botnet_dict = {
-                       'file_name' : self.file_name,
-                       'file_md5' : self.file_md5,
-                       'first_analysis_date' : self.first_analysis_date,
-                       'last_analysis_date' : self.last_analysis_date,
-                       'irc_addr' : self.irc_addr,
-                       'irc_server_pwd' : self.irc_server_pwd,
-                       'irc_nick' : self.irc_nick,
-                       'irc_user' : self.irc_user,
-                       'irc_mode' : self.irc_mode,
-                       'irc_channel' : self.irc_channel,
-                       'irc_nickserv' : self.irc_nickserv,
-                       'irc_notice' : self.irc_notice,
-                       'irc_privmsg' : self.irc_privmsg
+                       'file_name': self.file_name,
+                       'file_md5': self.file_md5,
+                       'first_analysis_date': self.first_analysis_date,
+                       'last_analysis_date': self.last_analysis_date,
+                       'irc_addr': self.irc_addr,
+                       'irc_server_pwd': self.irc_server_pwd,
+                       'irc_nick': self.irc_nick,
+                       'irc_user': self.irc_user,
+                       'irc_mode': self.irc_mode,
+                       'irc_channel': self.irc_channel,
+                       'irc_nickserv': self.irc_nickserv,
+                       'irc_notice': self.irc_notice,
+                       'irc_privmsg': self.irc_privmsg
                        }
         return botnet_dict
-        
+
     def replace_control(self, s):
         new_s = ''
         for c in s: #replace all control charactors.
@@ -68,31 +68,31 @@ class Botnet(object):
         xml.append(bot)
         host = etree.Element('host')
         bot.append(host)
-        if( len(self.irc_addr) > 0):
+        if len(self.irc_addr) > 0:
             host.text = self.irc_addr
         irc_server_pwd = etree.Element('irc_server_pwd')
         bot.append(irc_server_pwd)
-        if( len(self.irc_server_pwd) > 0):
+        if len(self.irc_server_pwd) > 0:
             irc_server_pwd.text = etree.CDATA(self.irc_server_pwd)
         irc_nick = etree.Element('irc_nick')
         bot.append(irc_nick)
-        if( len(self.irc_nick) > 0):
+        if len(self.irc_nick) > 0:
             irc_nick.text = etree.CDATA(self.irc_nick)
         irc_user = etree.Element('irc_user')
         bot.append(irc_user)
-        if( len(self.irc_user) > 0):
+        if len(self.irc_user) > 0:
             irc_user.text = self.irc_user
         irc_mode = etree.Element('irc_mode')
         bot.append(irc_mode)
-        if(len(self.irc_mode)>0):
+        if len(self.irc_mode) > 0:
             irc_mode.text = self.irc_mode
         irc_nickserv = etree.Element('irc_nickserv')
         bot.append(irc_nickserv)
-        if(len(self.irc_nickserv)> 0):
+        if len(self.irc_nickserv) > 0:
             irc_nickserv.text = etree.CDATA(irc_nickserv)
         irc_channels = etree.Element('irc_channels')
         bot.append(irc_channels)
-        if( len(self.irc_channel) > 0):
+        if len(self.irc_channel) > 0:
             for i in self.irc_channel:
                 irc_channel = etree.Element('irc_channel')
                 irc_channels.append(irc_channel)
@@ -101,7 +101,7 @@ class Botnet(object):
             irc_channels.append(etree.Element('irc_channel'))
         irc_notices = etree.Element('irc_notices')
         bot.append(irc_notices)
-        if( len(self.irc_notice) > 0):
+        if len(self.irc_notice) > 0:
             for i in self.irc_notice:
                 irc_notice = etree.Element('irc_notice')
                 irc_notices.append(irc_notice)
@@ -110,32 +110,31 @@ class Botnet(object):
             irc_notices.append(etree.Element('irc_notice'))
         irc_privmsgs = etree.Element('irc_privmsgs')
         bot.append(irc_privmsgs)
-        if( len(self.irc_privmsg) > 0):
+        if len(self.irc_privmsg) > 0:
             for i in self.irc_privmsg:
                 irc_privmsg = etree.Element('irc_privmsg')
                 irc_privmsgs.append(irc_privmsg)
                 irc_privmsg.text = etree.CDATA(self.replace_control(i))
         else:
             irc_privmsgs.append(etree.Element('irc_privmsg'))
-        return etree.tostring(xml, encoding="UTF-8", method='xml', xml_declaration=True)
+        return etree.tostring(xml, encoding="UTF-8",
+                              method='xml', xml_declaration=True)
+
 
 class DataAnalysis(object):
     """this class is used to extracts raw sandbox data to useful info for us"""
     def __init__(self, script, debug=0):
         self.botnet = Botnet(script)
         self.debug_level = debug
-        
+
     def analyze(self, output):
         for line in output.split("\n"):
-            if( self.debug_level> 0):
+            if self.debug_level > 0:
                 print repr(line)
             try:
-	    	line = line.decode("windows-1252")
+                line = line.decode("windows-1252")
             except(UnicodeDecodeError):
-		continue
-	    #print line
-            #if line[:9] == "MALICIOUS":
-            #    print "Malicious call", line[8:] 
+                continue
             if line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
             elif line[:4] == "PASS":
@@ -159,5 +158,4 @@ class DataAnalysis(object):
                     self.botnet.irc_privmsg.append(line[8:])
             elif line[:6] == "NOTICE":
                 self.botnet.irc_notice.append(line[7:])
-            
         return self.botnet
