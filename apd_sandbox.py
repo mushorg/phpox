@@ -25,7 +25,7 @@ class PHPSandbox(object):
         try:
             proc.kill()
         except OSError:
-            pass
+            print "Failed to kill process:", proc
 
     def php_tag_check(self, script):
         check_file = open(script, "r+")
@@ -70,28 +70,28 @@ class PHPSandbox(object):
 
     def sandbox(self, script, secs):
         if self.DEBUG_LEVEL > 0:
-            print "\n PRE: ", self.pre, "\n"
             stderr_opt = None
         else:
             stderr_opt = subprocess.PIPE
-
         try:
             if self.DEBUG_LEVEL > 0:
                 print self.pre + "listener.php"
-            proc_listener = subprocess.Popen(["php5-cgi", self.pre + "listener.php"],
-                                             shell=False)
+            proc_listener = subprocess.Popen(["php5-cgi",
+                                              self.pre + "listener.php"],
+                                              shell=False)
         except Exception as e:
             print "Error running the socket listener:", e
         else:
             if self.DEBUG_LEVEL > 0:
                 print "Listener running..."
         try:
-            proc_sandbox = subprocess.Popen(["php5-cgi", self.pre + "apd_sandbox.php", script],
-                    shell=False,
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=stderr_opt,
-                    )
+            proc_sandbox = subprocess.Popen(["php5-cgi",
+                                self.pre + "apd_sandbox.php", script],
+                                shell=False,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=stderr_opt,
+                                )
         except Exception as e:
             print "Error executing the sandbox:", e.message
         else:

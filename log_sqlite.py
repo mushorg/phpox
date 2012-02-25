@@ -1,17 +1,17 @@
 import sqlite3
 from datetime import datetime
 
+
 class LogSQLite(object):
-    
+
     def __init__(self):
         self.connection = sqlite3.connect("sandbox.db")
         self.create()
-    
-    
+
     def create(self):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""
-                CREATE TABLE IF NOT EXISTS 
+                CREATE TABLE IF NOT EXISTS
                 botnets(id INTEGER PRIMARY KEY,
                 file_md5 TEXT,
                 file_name TEXT,
@@ -29,14 +29,14 @@ class LogSQLite(object):
                 """)
         self.connection.commit()
         self.cursor.close()
-        
+
     def check_md5(self, botnet):
         self.cursor = self.connection.cursor()
         self.cursor.execute("""SELECT first_analysis FROM botnets WHERE file_md5 == ?""", (botnet.file_md5,))
         date = self.cursor.fetchone()
         self.cursor.close()
         return date
-        
+
     def insert(self, botnet):
         date = self.check_md5(botnet)
         if not date or not date[0]:
