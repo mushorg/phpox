@@ -16,9 +16,9 @@ import hpfeed.hpf_feed as hpf_feed
 
 class PHPSandbox(object):
 
-    def __init__(self, pre=os.getcwd() + '/'):
+    def __init__(self, pre=os.getcwd() + '/', debug_level = 0):
         self.pre = pre
-        self.DEBUG_LEVEL = 0
+        self.DEBUG_LEVEL =debug_level 
         self.feeder = hpf_feed.HPFeedClient(pre)
 
     def killer(self, proc):
@@ -76,7 +76,7 @@ class PHPSandbox(object):
         try:
             if self.DEBUG_LEVEL > 0:
                 print self.pre + "listener.php"
-            proc_listener = subprocess.Popen(["php5-cgi",
+            proc_listener = subprocess.Popen(["php5",
                                               self.pre + "listener.php"],
                                               shell=False)
         except Exception as e:
@@ -85,7 +85,7 @@ class PHPSandbox(object):
             if self.DEBUG_LEVEL > 0:
                 print "Listener running..."
         try:
-            proc_sandbox = subprocess.Popen(["php5-cgi",
+            proc_sandbox = subprocess.Popen(["php5",
                                 self.pre + "apd_sandbox.php", script],
                                 shell=False,
                                 stdin=subprocess.PIPE,
@@ -121,12 +121,12 @@ class PHPSandbox(object):
             return botnet
 
 if __name__ == '__main__':
-    sb = PHPSandbox()
     DEBUG_LEVEL = 0
     opts = getopt.getopt(sys.argv[1:], "v", [])
     for i in opts[0]:
         if i[0] == '-v':
             DEBUG_LEVEL += 1
+    sb = PHPSandbox(debug_level = DEBUG_LEVEL)
     try:
         sb.sandbox(opts[1][0], secs=10)
     except(IndexError):
