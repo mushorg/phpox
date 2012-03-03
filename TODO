@@ -5,22 +5,12 @@ SANDBOX
 - Lukas, Alice Flag script output and socket output differently (Find a way to overwrite echo calls)
 - Lukas, Alice, Python Listener
 - Louis (low) Log parameters for function(_exists) calls
-- Momo replace mail() (echo "MAIL to subject msg";)
-- Momo replace dl()
-- Momo replace extension_loaded() Remove apd from result
 - Julia, YuHan Script type detection
 - Julia, YuHan Script language detection
 - Louis (low) Hide APD from the malicious script (unload a module?)
 Make apd_sandbox.php every time we run the sandbox
-- Lukas HPFeed to send reports to glastopf.sandbox
 Extract more data based on static analysis?
-See if using apd from svn has improvements (http://svn.php.net/viewvc/pecl/apd/)
 
 WEB INTERFACE
-(coding day)
-Do we want to provide a web interface to submit samples?
 Generate a readable analysis output
 Provide xml output (FIXME: some escape char)
-
-VARIOUS
-- Syuan Sunday Presentation
