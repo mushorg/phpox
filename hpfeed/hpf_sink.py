@@ -3,6 +3,8 @@ import hashlib
 import os
 import base64
 
+from datetime import datetime
+
 import hpfeed.hpfeeds as hpfeeds
 import apd_sandbox as sandbox
 
@@ -18,7 +20,8 @@ class HPFeedsSink(object):
         self.sb = sandbox.PHPSandbox()
 
     def log(self, msg):
-        print '[hpf sink] {0}'.format(msg)
+        time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print '[hpf sink {0}] {1}'.format(time_stamp, msg)
 
     def get_filename(self, injected_file):
         file_name = hashlib.md5(injected_file).hexdigest()

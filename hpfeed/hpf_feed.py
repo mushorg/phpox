@@ -1,6 +1,8 @@
 import sys
 from ConfigParser import ConfigParser
 
+from datetime import datetime
+
 if __name__ == '__main__':
     import hpfeeds
 else:
@@ -19,7 +21,8 @@ class HPFeedClient(object):
         self.secret = conf_parser.get("hpfeed", "secret").encode('latin1')
 
     def log(self, msg):
-        print '[hpf feed] {0}'.format(msg)
+        time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print '[hpf feed {0}] {1}'.format(time_stamp, msg)
 
     def connect(self):
         try:
