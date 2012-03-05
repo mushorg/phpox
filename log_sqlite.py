@@ -52,8 +52,8 @@ class LogSQLite(object):
                  botnet.irc_mode, ', '.join(botnet.irc_channel), repr(str(botnet.irc_nickserv)).replace("'", ""),
                  ', '.join(botnet.irc_notice), repr(str(botnet.irc_privmsg)).replace("'", ""),
                  botnet.first_analysis_date, botnet.last_analysis_date))
-        id = self.connection.lastrowid
+        sandbox_id = self.cursor.lastrowid
         self.connection.commit()
         self.cursor.close()
         self.connection.close()
-        return id
+        return sandbox_id
