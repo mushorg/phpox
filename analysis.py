@@ -11,6 +11,7 @@ from lxml import etree
 class Botnet(object):
     """  this class contains irc bot info"""
     def __init__(self, script):
+        self.id = ""
         self.file_name = script.rsplit("/", 1)[1]
         self.file_md5 = hashlib.md5(open(script).read()).hexdigest()
         self.first_analysis_date = ""
@@ -27,6 +28,7 @@ class Botnet(object):
 
     def todict(self):
         botnet_dict = {
+                       'id': self.id,
                        'file_name': self.file_name,
                        'file_md5': self.file_md5,
                        'first_analysis_date': self.first_analysis_date,

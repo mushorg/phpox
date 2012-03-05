@@ -111,7 +111,7 @@ class PHPSandbox(object):
             analyzer = analysis.DataAnalysis(script, debug=self.DEBUG_LEVEL)
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
-            logger.insert(botnet)
+            botnet.id = logger.insert(botnet)
             self.feeder.connect()
             self.feeder.publish('glastopf.sandbox',
                                     json.dumps(botnet.todict()))
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     for i in opts[0]:
         if i[0] == '-v':
             DEBUG_LEVEL += 1
-    sb = PHPSandbox(debug_level = DEBUG_LEVEL)
+    sb = PHPSandbox(debug_level=DEBUG_LEVEL)
     try:
         sb.sandbox(opts[1][0], secs=10)
     except(IndexError):
