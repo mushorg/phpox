@@ -49,10 +49,14 @@ class HPFeedsSink(object):
 
         def on_message(identifier, channel, payload):
             if channel == "glastopf.files":
-                file_name = hps.store_file(
+                try:
+                    file_name = hps.store_file(
                         base64.b64decode(str(payload).split(' ', 1)[1]))
-                self.log("Analyzing file %s" % file_name)
-                self.sb.sandbox('files/' + file_name, 10)
+                except TypeError as e:
+                    self.log('TypeError: %s' % str(e))
+                else:
+                    self.log("Analyzing file %s" % file_name)
+                    self.sb.sandbox('files/' + file_name, 10)
 
         def on_error(payload):
             self.log('Error message from server: {0}'.format(payload))
