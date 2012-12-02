@@ -29,7 +29,7 @@ def output(s):
 php_utils = php_utils.util_functions()
 FUNCTIONS = apd_functions.FUNCTIONS
 
-output("<?php\nif(!extension_loaded('apd')) {\n\tdl('apd.so');\n}\n")
+output("<?php\nif(!extension_loaded('bfr')) {\n\tdl('bfr.so');\n}\n")
 output(php_utils.gen_utils_functions())
 output(shell_sandbox.shell_sandbox())
 int_name = 0

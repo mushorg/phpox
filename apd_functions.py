@@ -25,7 +25,7 @@ FUNCTIONS = {
              "disk_free_space;": "\treturn '%s';" % freespace,
              "diskfreespace;": "\treturn '%s';" % freespace,
              "disk_total_space;": "\treturn '%s';" % str(random.randint(75161927680, 397284474880)),
-             "exec;$cmd;&$ret;": execute.call(),
+             "exec;$cmd;$ret;": execute.call(),
              "extension_loaded;$name": extension_loaded.call(),
              "fgets;$handle;$length;": fgets.call(),
              "function_exists;$name;": function_exists.call(),
@@ -41,10 +41,10 @@ FUNCTIONS = {
              #"mail;$to;$subject;$message;": mail.call(),
              "php_uname;": php_uname.call(),
              "dl;": dl.call(),
-             "passthru;$cmd;&$ret;": passthru.call(),
+             "passthru;$cmd;$ret;": passthru.call(),
              "popen;$cmd;": popen.call(),
              "shell_exec;$cmd;": shell_exec.call(),
-             "system;$cmd;&$ret;": system.call(),
+             "system;$cmd;$ret;": system.call(),
              }
 
 FUNCTIONS2 = {
