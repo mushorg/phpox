@@ -1,14 +1,32 @@
+# Copyright (C) 2012  Lukas Rist
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 import random
-import sys 
 import string
 import json
 import os
 from string import Template
 
+
 class util_functions(object):
     def __init__(self):
-        self.symbol_table = {} 
-        self.used_name = [] #initialed in read_json()
+        self.symbol_table = {}
+        #initialed in read_json()
+        self.used_name = []
         self.jfile = None
         self.gen_utils_functions()
 
@@ -38,8 +56,8 @@ class util_functions(object):
             ret += self.def_string_parser()
             ret += self.def_multiple_irc()
             obj = {
-                'used_name':self.used_name,
-                'symbol_table':self.symbol_table,
+                'used_name': self.used_name,
+                'symbol_table': self.symbol_table,
             }
             fd = open('/tmp/php_utils_table_%d' % os.getpid(), 'w')
             fd.write(json.dumps(obj))
@@ -49,18 +67,17 @@ class util_functions(object):
             fd.close()
         return ret
 
-    def get_symbol(self, name=None ):
-        if( name is None ):
+    def get_symbol(self, name=None):
+        if name is None:
             return self.symbol_table
         else:
             return self.symbol_table[name]
-        
+
     def symbol_append(self, symbol, masq):
         if(symbol in self.symbol_table):
             raise BaseException('Name collaps: %s' % symbol)
         self.symbol_table[symbol] = masq
         self.used_name.append(masq)
-
 
     def generate_random_name(self):
         ret = ''
@@ -77,7 +94,7 @@ class util_functions(object):
     def def_string_parser(self):
         ret = ''
         replacement = {
-            'simple_code_parser':'',
+            'simple_code_parser': '',
             }
         replacement['simple_code_parser'] = self.generate_random_name()
         self.symbol_append('simple_code_parser', replacement['simple_code_parser'])
@@ -94,11 +111,12 @@ class util_functions(object):
     def def_multiple_irc(self):
         ret = ''
         replacement = {
-            'multiple_irc':'',
-            'parsed_strings':'',
-            'find_irc_server':'',
-            'multiple_irc_return_false':'',
-            'simple_code_parser':'', #it's should be generated.
+            'multiple_irc': '',
+            'parsed_strings': '',
+            'find_irc_server': '',
+            'multiple_irc_return_false': '',
+            #it's should be generated.
+            'simple_code_parser': '',
         }
         replacement['multiple_irc'] = self.generate_random_name()
         self.symbol_append('multiple_irc', replacement['multiple_irc'])
@@ -117,7 +135,7 @@ class util_functions(object):
         t = Template(line)
         ret += t.substitute(replacement)
         return ret
-        
+
 #testing program
 if __name__ == "__main__":
     utils = util_functions()

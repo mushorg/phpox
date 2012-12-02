@@ -1,7 +1,19 @@
-"""analysis.py
-analysis.py gets all the standard output of botnet information from linux terminal
-to xml document.
-"""
+# Copyright (C) 2012  Lukas Rist
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import hashlib
 import string
@@ -47,7 +59,8 @@ class Botnet(object):
 
     def replace_control(self, s):
         new_s = ''
-        for c in s: #replace all control charactors.
+        for c in s:
+            #replace all control charactors.
             #XXX: this algorithm waste much computational time.
             if c in string.printable:
                 new_s += c

@@ -1,14 +1,31 @@
+# Copyright (C) 2012  Lukas Rist
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 import docsimlarity
 import matrix_training
-import sys, os
+import sys
+import os
 import getopt
 import json
 
 
-    
 def similarity_docrequest(classifier, request_list_dump, similarity_list):
     request_list_load = json.loads(request_list_dump)
-    fh = open("classifier/trainset/"+classifier+"/"+classifier+"_matrix")
+    fh = open("classifier/trainset/" + classifier + "/" + classifier + "_matrix")
     for linestr in fh.readlines():
         dictall = json.loads(linestr)
         for documentlist in dictall.keys():
@@ -16,60 +33,61 @@ def similarity_docrequest(classifier, request_list_dump, similarity_list):
             similarity_list.append(equality)
     return similarity_list
 
+
 def ranking_similarity(setpath, similarity_phpbot, similarity_phpecho, similarity_phpdownloading, similarity_phpshell):
     getMedian_prob_list = []
     max_prob_list = []
-    
+
     getMedian_prob_list.append(docsimlarity.getMedian(similarity_phpbot))
     max_prob_list.append(max(similarity_phpbot))
-    
+
     getMedian_prob_list.append(docsimlarity.getMedian(similarity_phpecho))
     max_prob_list.append(max(similarity_phpecho))
-    
+
     getMedian_prob_list.append(docsimlarity.getMedian(similarity_phpdownloading))
     max_prob_list.append(max(similarity_phpdownloading))
-    
+
     getMedian_prob_list.append(docsimlarity.getMedian(similarity_phpshell))
     max_prob_list.append(max(similarity_phpshell))
-    
-    print "Median_Similarity:"+ str(getMedian_prob_list)
+
+    print "Median_Similarity:" + str(getMedian_prob_list)
     print "Maximum_Similarity:" + str(max_prob_list)
-    
+
     if getMedian_prob_list.index(max(getMedian_prob_list)) == max_prob_list.index(max(max_prob_list)):
-        if (max(getMedian_prob_list) > 0.6) or (max(max_prob_list) > 0.80) :
+        if (max(getMedian_prob_list) > 0.6) or (max(max_prob_list) > 0.80):
             strprint = "Clear Classification:"
             if max_prob_list.index(max(max_prob_list)) == 0:
-                addtrainset("cp " + setpath+" classifier/trainsamples/phpbot/")
-                strprint = strprint + "phpbot" +"\nSimilarity:" + str(max(max_prob_list))
-                
+                addtrainset("cp " + setpath + " classifier/trainsamples/phpbot/")
+                strprint = strprint + "phpbot" + "\nSimilarity:" + str(max(max_prob_list))
+
                 #print "mv " + docpath+"/"+sample + " trainset/phpbot/"
-            elif max_prob_list.index(max(max_prob_list)) == 1:              
-                addtrainset("cp " + setpath+" classifier/trainsamples/phpecho/")
+            elif max_prob_list.index(max(max_prob_list)) == 1:
+                addtrainset("cp " + setpath + " classifier/trainsamples/phpecho/")
                 strprint = strprint + "phpecho" + "\nSimilarity:" + str(max(max_prob_list))
-                
-            elif max_prob_list.index(max(max_prob_list)) == 2:              
-                addtrainset("cp " + setpath+" classifier/trainsamples/phpdownloading/")
-                strprint = strprint + "phpdownaloding" + "\nSimilarity:" +  str(max(max_prob_list))
-                
+
+            elif max_prob_list.index(max(max_prob_list)) == 2:
+                addtrainset("cp " + setpath + " classifier/trainsamples/phpdownloading/")
+                strprint = strprint + "phpdownaloding" + "\nSimilarity:" + str(max(max_prob_list))
+
             else:
-                addtrainset("cp " + setpath+" classifier/trainsamples/phpshell/")
-                strprint = strprint + "phpshell" + "\nSimilarity:" +  str(max(max_prob_list))
-            
+                addtrainset("cp " + setpath + " classifier/trainsamples/phpshell/")
+                strprint = strprint + "phpshell" + "\nSimilarity:" + str(max(max_prob_list))
+
             print strprint
-            
+
         else:
             addtrainset("cp " + setpath + " classifier/trainsamples/checking/")
             print  "Possible Classification: " + str(max_prob_list.index(max(max_prob_list))) + "  Similarity:" + str(max(max_prob_list))
-            
+
     else:
-            print "Ambiguous classification:"+ str(getMedian_prob_list.index(max(getMedian_prob_list)))+" v.s " + str(max_prob_list.index(max(max_prob_list)))
-            addtrainset("cp " + setpath+ " classifier/trainsamples/others/")
-            
-          
-   
+            print "Ambiguous classification:" + str(getMedian_prob_list.index(max(getMedian_prob_list)))+" v.s " + str(max_prob_list.index(max(max_prob_list)))
+            addtrainset("cp " + setpath + " classifier/trainsamples/others/")
+
+
 def addtrainset(command):
     os.system(command)
     #    print getMedian_prob_list.index(max(getMedian_prob_list)
+
 
 def redo_trainset(classobj):
     """Generate Trainset for phpbot, phpshell, phpdownloading, phpshell. If you need to update training matrix, please remove comment!"""
@@ -79,26 +97,22 @@ def redo_trainset(classobj):
     #matrix_training.getTrainset("phpecho")
     matrix_training.getTrainset(classobj)
 
-def classifier_start(opts):                                        
+
+def classifier_start(opts):
     print "File Classifier Starting based on document similarity "
     #opts  = getopt.getopt(sys.argv[1], "v", [])
     request_list = {}
     request_list_dump = matrix_training.wordlist_docrequest(opts, request_list)
-        
     similarity_phpbot = []
     similarity_phpdownloading = []
     similarity_phpecho = []
     similarity_phpshell = []
     similarity_others = []
-    
     # Calculate similarity of documents
     similarity_phpbot = similarity_docrequest("phpbot", request_list_dump, similarity_phpbot)
     similarity_phpdownloading = similarity_docrequest("phpdownloading", request_list_dump, similarity_phpdownloading)
     similarity_phpecho = similarity_docrequest("phpecho", request_list_dump, similarity_phpecho)
     similarity_phpshell = similarity_docrequest("phpshell", request_list_dump, similarity_phpshell)
-    
     numcase = ranking_similarity(opts, similarity_phpbot, similarity_phpecho, similarity_phpdownloading, similarity_phpshell)
     return numcase
     #document_list = [document1]
-
-
