@@ -18,7 +18,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import random
-import apd_functions
+import functions
 from replacement import shell_sandbox
 from php import utils as php_utils
 
@@ -27,7 +27,7 @@ def output(s):
     print s
 
 php_utils = php_utils.util_functions()
-FUNCTIONS = apd_functions.FUNCTIONS
+FUNCTIONS = functions.FUNCTIONS
 
 output("<?php\nif(!extension_loaded('bfr')) {\n\tdl('bfr.so');\n}\n")
 output(php_utils.gen_utils_functions())

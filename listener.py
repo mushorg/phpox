@@ -29,30 +29,37 @@ class FakeServer(SocketServer.TCPServer):
 class RequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        pw_list = brute.find_strings(self.server.filename)
+        #pw_list = brute.find_strings(self.server.filename)
+        pw_list = ["foo", "bar"]
         self.request.send(":ircserver NOTICE * :*** SomeString \n")
         self.request.send(":ircserver 001 nick :SomeString \n")
         self.request.send(":ircserver 004 nick SomeString \n")
         while True:
             data = self.request.recv(1024)
-            print data, "\n"
+            self.request.send(data)
             if "JOIN" in data:
                 channel = "#" + data.partition("#")[2].split(" ")[0].strip()
                 for pw in pw_list:
-                    msg = ":owner!name@address PRIVMSG " + channel + " :.user " + pw
+                    msg = ":owner!name@address PRIVMSG " + channel + " :.user " + pw + "\n"
                     try:
                         self.request.send(msg)
                     except Exception as e:
                         print "exception message:", e
                     time.sleep(0.1)
             else:
-                time.sleep(3)
+                time.sleep(1)
         return
 
 
 class FakeListener(object):
 
-    def main(self, filename):
+    def main(self, filename=None):
         address = ('localhost', 1234)
         server = FakeServer(address, RequestHandler, filename)
         return server
+
+
+if __name__ == "__main__":
+    listener = FakeListener()
+    server = listener.main()
+    server.serve_forever()
