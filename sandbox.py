@@ -25,6 +25,9 @@ import sqlite3
 import getopt
 import json
 
+from pprint import pprint
+from ConfigParser import ConfigParser
+
 import analysis
 import log_sqlite
 import listener
@@ -37,10 +40,11 @@ class PHPSandbox(object):
 
     def __init__(self, pre=os.getcwd() + '/', debug_level=0):
         self.pre = pre
+        self.conf_parser = ConfigParser()
+        self.conf_parser.read(self.pre + "sandbox.cfg")
+        if self.conf_parser.get("hpfeed", "enabled") == "True":
+            self.feeder = hpf_feed.HPFeedClient(pre)
         self.DEBUG_LEVEL = debug_level
-        self.feeder = hpf_feed.HPFeedClient(pre)
-        fake_listener = listener.FakeListener()
-        self.listener_server = fake_listener.main()
 
     def killer(self, proc):
         try:
@@ -90,21 +94,14 @@ class PHPSandbox(object):
         return analyze
 
     def sandbox(self, script, secs):
+        if not os.path.isfile(script):
+            raise Exception("Sample not found: {0}".format(script))
         if self.DEBUG_LEVEL > 0:
             stderr_opt = None
         else:
             stderr_opt = subprocess.PIPE
-        try:
-            if self.DEBUG_LEVEL > 0:
-                print self.pre + "listener.php"
-            proc_listener = subprocess.Popen(["php5",
-                                              self.pre + "listener.php"],
-                                              shell=False)
-        except Exception as e:
-            print "Error running the socket listener:", e
-        else:
-            if self.DEBUG_LEVEL > 0:
-                print "Listener running..."
+        self.fake_listener = listener.ListenerThread()
+        self.fake_listener.start()
         try:
             proc_sandbox = subprocess.Popen(["php5",
                                 self.pre + "sandbox.php", script],
@@ -125,20 +122,22 @@ class PHPSandbox(object):
             stdout_value = proc_sandbox.communicate()[0]
             timer.cancel()
         except Exception as e:
-            proc_listener.kill()
+            self.fake_listener.stop()
             print "Communication error:", e.message
         else:
-            proc_listener.kill()
+            self.fake_listener.stop()
             analyzer = analysis.DataAnalysis(script, debug=self.DEBUG_LEVEL)
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
             botnet.id = logger.insert(botnet)
-            self.feeder.connect()
-            self.feeder.publish('glastopf.sandbox',
+            if self.conf_parser.get("hpfeed", "enabled") == "True":
+                self.feeder.connect()
+                self.feeder.publish('glastopf.sandbox',
                                     json.dumps(botnet.todict()))
-            self.feeder.close()
+                self.feeder.close()
             if self.DEBUG_LEVEL > 0:
                 print "Parsed with sandbox"
+                pprint(botnet.todict())
             return botnet
 
 if __name__ == '__main__':
@@ -149,6 +148,9 @@ if __name__ == '__main__':
             DEBUG_LEVEL += 1
     sb = PHPSandbox(debug_level=DEBUG_LEVEL)
     try:
-        sb.sandbox(opts[1][0], secs=10)
+        sb.sandbox(opts[1][0], secs=30)
     except(IndexError):
         print "Specify the file to analyze..."
+    except:
+        raise
+        sb.fake_listener.stop()
