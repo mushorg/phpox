@@ -25,8 +25,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-/apd_sandbox.php
 /sandbox.db
-/.project
-/.pydevproject
-/apd_sandbox.cfg
+/sandbox.php

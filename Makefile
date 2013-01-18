@@ -1,10 +1,10 @@
 PYTHONPATH=`pwd`
 
-all: apd_sandbox.php
+all: sandbox.php
 
-apd_sandbox.php: apd_generate.py replacement/*.py php/* apd_functions.py
-	python apd_generate.py > apd_sandbox.php
+sandbox.php: generate.py replacement/*.py php/* functions.py
+	python generate.py > sandbox.php
 clean:
-	rm apd_sandbox.php
+	rm sandbox.php
 test_shell:
-	python apd_sandbox.py -v samples/shell_sandbox.php
+	python sandbox.py -v samples/shell_sandbox.php

@@ -147,7 +147,7 @@ class DataAnalysis(object):
             if self.debug_level > 0:
                 print repr(line)
             try:
-                line = line.decode("windows-1252")
+                line = line.decode("windows-1252").strip()
             except(UnicodeDecodeError):
                 continue
             if line[:4] == "ADDR":
