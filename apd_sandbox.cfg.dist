@@ -1,8 +1,8 @@
 [hpfeed]
-enabled = True
+enabled = False
 host = hpfeeds.honeycloud.net
 port = 10000
-secret = 4crkn04vh889mcwr
+secret =
 # channels comma separated
 chan = glastopf.sandbox
-ident = ilsvk@hp1
+ident =

@@ -29,3 +29,4 @@ pip-log.txt
 /sandbox.db
 /.project
 /.pydevproject
+/apd_sandbox.cfg
