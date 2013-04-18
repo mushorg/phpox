@@ -16,4 +16,4 @@ Create the the sandbox PHP file
 
 ## BFR
 
-Follow the [BFR](https://github.com/glaslos/BFR) documentation
+Follow the [BFR](https://github.com/glastopf/BFR) documentation
