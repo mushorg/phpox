@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2015 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -17,12 +17,15 @@
 # Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+from gevent.monkey import patch_all
+patch_all()
+
 import os
-import sys
-import subprocess
-import threading
 import sqlite3
-import json
+
+import gevent
+import gevent.timeout
+import gevent.subprocess
 
 from pprint import pprint
 from ConfigParser import ConfigParser
@@ -41,14 +44,8 @@ class PHPSandbox(object):
         self.conf_parser = ConfigParser()
         self.conf_parser.read(self.pre + "sandbox.cfg")
         self.DEBUG_LEVEL = debug_level
+        self.greenlet = None
         self.fake_listener = None
-
-    @classmethod
-    def killer(cls, proc):
-        try:
-            proc.kill()
-        except OSError:
-            print "Failed to kill process:", proc
 
     @classmethod
     def php_tag_check(cls, script):
@@ -79,9 +76,14 @@ class PHPSandbox(object):
         try:
             #sample analyzed before
             if filehash.index(sample) >= 0:
-                curs.execute("SELECT (strftime('%s','now','localtime')-strftime('%s',last_analysis_date)) /3600 AS period_hr "\
-                             "FROM botnets WHERE file_md5 = :sample "\
-                             "AND last_analysis_date = (SELECT MAX(last_analysis_date) FROM botnets WHERE file_md5 =:sample )",{"sample": sample})
+                curs.execute(
+                    """
+                    SELECT (strftime('%s','now','localtime')-strftime('%s',last_analysis_date)) /3600 AS period_hr
+                    FROM botnets WHERE file_md5 = :sample
+                    AND last_analysis_date = (SELECT MAX(last_analysis_date) FROM botnets WHERE file_md5 =:sample )
+                    """,
+                    {"sample": sample}
+                )
                 for row in curs:
                     if row[0] > threshold_hr:
                         analyze = 1
@@ -96,22 +98,17 @@ class PHPSandbox(object):
     def sandbox(self, script, secs):
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
-        if self.DEBUG_LEVEL > 0:
-            stderr_opt = None
-        else:
-            stderr_opt = subprocess.PIPE
-        self.fake_listener = listener.ListenerThread()
-        self.fake_listener.start()
+        self.fake_listener = listener.FakeListener()
+        self.greenlet = self.fake_listener.run()
         try:
-            proc_sandbox = subprocess.Popen(
+            proc_sandbox = gevent.subprocess.Popen(
                 [
                     "php5",
                     self.pre + "sandbox.php", script
                 ],
-                shell=False,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=stderr_opt,
+                stdout=gevent.subprocess.PIPE,
+                stderr=gevent.subprocess.PIPE,
+                shell=False
             )
         except Exception as e:
             proc_sandbox = None
@@ -120,15 +117,20 @@ class PHPSandbox(object):
             if self.DEBUG_LEVEL > 0:
                 print "Sandbox running..."
         try:
-            timer = threading.Timer(secs, self.killer, (proc_sandbox,))
-            timer.start()
-            stdout_value = proc_sandbox.communicate()[0]
-            timer.cancel()
+            with gevent.Timeout(secs):
+                stdout_value = ""
+                while True:
+                    try:
+                        stdout_value += proc_sandbox.stdout.readline()
+                    except gevent.timeout.Timeout:
+                        break
+                    gevent.sleep(0.1)
+            proc_sandbox.kill()
         except Exception as e:
-            self.fake_listener.stop()
+            self.greenlet.kill()
             print "Communication error:", e.message
         else:
-            self.fake_listener.stop()
+            self.greenlet.kill()
             analyzer = analysis.DataAnalysis(script, debug=self.DEBUG_LEVEL)
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
@@ -142,11 +144,11 @@ if __name__ == '__main__':
     DEBUG_LEVEL = 1
     sb = PHPSandbox(debug_level=DEBUG_LEVEL)
     try:
-        sb.sandbox('samples/zollard.php', secs=30)
+        sb.sandbox('samples/irc_bot.php', secs=10)
     except IndexError:
         print "Specify the file to analyze..."
         raise
     except:
-        if sb.fake_listener:
-            sb.fake_listener.stop()
+        if sb.greenlet:
+            sb.greenlet.kill()
         raise

@@ -15,66 +15,44 @@
 # Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import SocketServer
 import time
-import threading
-
-import brute
-
-
-class FakeServer(SocketServer.TCPServer):
-    def __init__(self, server_address, RequestHandlerClass, stopit):
-        SocketServer.TCPServer.__init__(self, server_address, RequestHandlerClass)
-        self.stopit = stopit
+from gevent.server import StreamServer
+import gevent
 
 
-class RequestHandler(SocketServer.BaseRequestHandler):
+class FakeListener():
 
-    def brute_pw(self, data):
+    def __init__(self):
+        self.server = StreamServer(('127.0.0.1', 1234), self.handle)
+
+    def brute_pw(self, data, socket):
         pw_list = ["foo", "bar", "planetworkteams"]
         channel = "#" + data.partition("#")[2].split(" ")[0].strip()
         for pw in pw_list:
             msg = ":owner!name@address PRIVMSG " + channel + " :.user " + pw + "\n"
             try:
-                self.request.send(msg)
+                socket.send(msg)
                 msg = ":owner!name@address PRIVMSG " + channel + " :.info\n"
-                self.request.send(msg)
+                socket.send(msg)
             except Exception as e:
                 print "exception message:", e
             time.sleep(0.1)
 
-    def handle(self):
+    def handle(self, socket, address):
         #pw_list = brute.find_strings()
-        self.request.send(":ircserver NOTICE * :*** SomeString \n")
-        self.request.send(":ircserver 001 nick :SomeString \n")
-        self.request.send(":ircserver 004 nick SomeString \n")
-        while not self.server.stopit.is_set():
-            data = self.request.recv(1024)
+        socket.send(":ircserver NOTICE * :*** SomeString \n")
+        socket.send(":ircserver 001 nick :SomeString \n")
+        socket.send(":ircserver 004 nick SomeString \n")
+        while True:
+            data = socket.recv(1024)
             if len(data) > 0:
-                self.request.send(data.strip() + "\n")
+                socket.send(data.strip() + "\n")
             if "JOIN" in data:
                 pass
-                #self.brute_pw(data)
             else:
                 time.sleep(1)
         return
 
-
-class ListenerThread(threading.Thread):
-
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
-        threading.Thread.__init__(self, group=group, target=target, name=name,
-                                  verbose=verbose)
-        self.setDaemon(True)
-        self.args = args
-        self.kwargs = kwargs
-        self.stopit = threading.Event()
-
     def run(self):
-        address = ('localhost', 1234)
-        server = FakeServer(address, RequestHandler, self.stopit)
-        server.serve_forever()
+        return gevent.spawn(self.server.start)
 
-    def stop(self):
-        self.stopit.set()

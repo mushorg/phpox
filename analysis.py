@@ -43,20 +43,20 @@ class Botnet(object):
 
     def todict(self):
         botnet_dict = {
-            'id': self.id,
-            'file_name': self.file_name,
-            'file_md5': self.file_md5,
-            'first_analysis_date': self.first_analysis_date,
-            'last_analysis_date': self.last_analysis_date,
-            'irc_addr': self.irc_addr,
-            'irc_server_pwd': self.irc_server_pwd,
-            'irc_nick': self.irc_nick,
-            'irc_user': self.irc_user,
-            'irc_mode': self.irc_mode,
-            'irc_channel': self.irc_channel,
-            'irc_nickserv': self.irc_nickserv,
-            'irc_notice': self.irc_notice,
-            'irc_privmsg': self.irc_privmsg
+        'id': self.id,
+        'file_name': self.file_name,
+        'file_md5': self.file_md5,
+        'first_analysis_date': self.first_analysis_date,
+        'last_analysis_date': self.last_analysis_date,
+        'irc_addr': self.irc_addr,
+        'irc_server_pwd': self.irc_server_pwd,
+        'irc_nick': self.irc_nick,
+        'irc_user': self.irc_user,
+        'irc_mode': self.irc_mode,
+        'irc_channel': self.irc_channel,
+        'irc_nickserv': self.irc_nickserv,
+        'irc_notice': self.irc_notice,
+'irc_privmsg': self.irc_privmsg
         }
         return botnet_dict
 

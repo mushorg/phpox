@@ -1,4 +1,4 @@
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2015 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 
 def call():
     function = """\t$function_name = "fgets" . "_" . $rand;
-\t$ret = $function_name($handle,$length);
+\t$ret = $function_name($handle, $length);
 \techo $ret;
 \treturn $ret;"""
     return function

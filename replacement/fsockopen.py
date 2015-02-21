@@ -1,4 +1,4 @@
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2015 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@ from string import Template
 def call():
     utils = php_utils.UtilFunctions()
     multiple_irc_return_false = utils.get_symbol('multiple_irc_return_false')
-    T = Template("""\techo "\\nADDR " . $$hostname . ':' . $$port . "\\n";
+    template = Template("""\techo "\\nADDR " . $$hostname . ':' . $$port . "\\n";
 \t$$multiple_irc_return_false = "${multiple_irc_return_false}";
 \tif($$multiple_irc_return_false()){
 \t\tif(rand(0,1) == 0){
@@ -33,5 +33,5 @@ def call():
 \t$$function_name = "fsockopen" . "_" . $$rand;
 \t$$sock = $$function_name('127.0.0.1', 1234);
 \treturn $$sock;""")
-    function = T.substitute(multiple_irc_return_false=multiple_irc_return_false)
+    function = template.substitute(multiple_irc_return_false=multiple_irc_return_false)
     return function

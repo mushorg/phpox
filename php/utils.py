@@ -1,4 +1,4 @@
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2012 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -114,7 +114,7 @@ class UtilFunctions(object):
             'parsed_strings': '',
             'find_irc_server': '',
             'multiple_irc_return_false': '',
-            #it's should be generated.
+            #it should be generated.
             'simple_code_parser': '',
         }
         replacement['multiple_irc'] = self.generate_random_name()
