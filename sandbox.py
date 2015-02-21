@@ -22,7 +22,6 @@ import sys
 import subprocess
 import threading
 import sqlite3
-import getopt
 import json
 
 from pprint import pprint
@@ -33,7 +32,6 @@ import log_sqlite
 import listener
 
 from lang import lang_detection
-import hpfeed.hpf_feed as hpf_feed
 
 
 class PHPSandbox(object):
@@ -42,39 +40,41 @@ class PHPSandbox(object):
         self.pre = pre
         self.conf_parser = ConfigParser()
         self.conf_parser.read(self.pre + "sandbox.cfg")
-        if self.conf_parser.get("hpfeed", "enabled") == "True":
-            self.feeder = hpf_feed.HPFeedClient(pre)
         self.DEBUG_LEVEL = debug_level
+        self.fake_listener = None
 
-    def killer(self, proc):
+    @classmethod
+    def killer(cls, proc):
         try:
             proc.kill()
         except OSError:
             print "Failed to kill process:", proc
 
-    def php_tag_check(self, script):
-        check_file = open(script, "r+")
-        file_content = check_file.read()
-        if not "<?" in file_content:
-            file_content = "<?php" + file_content
-            raw_input("tag fixed!")
-        if not "?>" in file_content:
-            file_content = file_content + "?>"
-        check_file.write(file_content)
-        check_file.close()
+    @classmethod
+    def php_tag_check(cls, script):
+        with open(script, "r+") as check_file:
+            file_content = check_file.read()
+            if not "<?" in file_content:
+                file_content = "<?php" + file_content
+            if not "?>" in file_content:
+                file_content += "?>"
+            check_file.write(file_content)
         return script
 
-    def detect_language(self, script):
+    @classmethod
+    def detect_language(cls, script_path):
         lang_classifier = lang_detection.LangClassifier()
-        language = lang_classifier.classify(open(script, "r").read())
+        with open(script_path, "rb") as fh:
+            language = lang_classifier.classify(fh.read())
         return language
 
-    def analysis_check(self, sample):
+    @classmethod
+    def analysis_check(cls, sample):
         analyze = 0
         threshold_hr = 10
         conn = sqlite3.connect('sandbox.db')
         curs = conn.cursor()
-        curs.execute("SELECT DISTINCT file_md5 FROM botnets")
+        curs.execute("""SELECT DISTINCT file_md5 FROM botnets""")
         filehash = [str(row[0]) for row in curs.fetchall()]
         try:
             #sample analyzed before
@@ -85,7 +85,7 @@ class PHPSandbox(object):
                 for row in curs:
                     if row[0] > threshold_hr:
                         analyze = 1
-        except Exception:
+        except:
             analyze = 1
             print "Sample file has not been analyzed before."
         curs.close()
@@ -103,19 +103,22 @@ class PHPSandbox(object):
         self.fake_listener = listener.ListenerThread()
         self.fake_listener.start()
         try:
-            proc_sandbox = subprocess.Popen(["php5",
-                                self.pre + "sandbox.php", script],
-                                shell=False,
-                                stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=stderr_opt,
-                                )
+            proc_sandbox = subprocess.Popen(
+                [
+                    "php5",
+                    self.pre + "sandbox.php", script
+                ],
+                shell=False,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=stderr_opt,
+            )
         except Exception as e:
+            proc_sandbox = None
             print "Error executing the sandbox:", e.message
         else:
             if self.DEBUG_LEVEL > 0:
                 print "Sandbox running..."
-        stdout_value = ""
         try:
             timer = threading.Timer(secs, self.killer, (proc_sandbox,))
             timer.start()
@@ -130,27 +133,20 @@ class PHPSandbox(object):
             botnet = analyzer.analyze(stdout_value)
             logger = log_sqlite.LogSQLite()
             botnet.id = logger.insert(botnet)
-            if self.conf_parser.get("hpfeed", "enabled") == "True":
-                self.feeder.connect()
-                self.feeder.publish('glastopf.sandbox',
-                                    json.dumps(botnet.todict()))
-                self.feeder.close()
             if self.DEBUG_LEVEL > 0:
                 print "Parsed with sandbox"
                 pprint(botnet.todict())
             return botnet
 
 if __name__ == '__main__':
-    DEBUG_LEVEL = 0
-    opts = getopt.getopt(sys.argv[1:], "v", [])
-    for i in opts[0]:
-        if i[0] == '-v':
-            DEBUG_LEVEL += 1
+    DEBUG_LEVEL = 1
     sb = PHPSandbox(debug_level=DEBUG_LEVEL)
     try:
-        sb.sandbox(opts[1][0], secs=30)
-    except(IndexError):
+        sb.sandbox('samples/zollard.php', secs=30)
+    except IndexError:
         print "Specify the file to analyze..."
-    except:
         raise
-        sb.fake_listener.stop()
+    except:
+        if sb.fake_listener:
+            sb.fake_listener.stop()
+        raise
