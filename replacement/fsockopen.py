@@ -20,7 +20,7 @@ from string import Template
 
 
 def call():
-    utils = php_utils.util_functions()
+    utils = php_utils.UtilFunctions()
     multiple_irc_return_false = utils.get_symbol('multiple_irc_return_false')
     T = Template("""\techo "\\nADDR " . $$hostname . ':' . $$port . "\\n";
 \t$$multiple_irc_return_false = "${multiple_irc_return_false}";

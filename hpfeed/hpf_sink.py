@@ -6,7 +6,7 @@ import base64
 from datetime import datetime
 
 import hpfeed.hpfeeds as hpfeeds
-import apd_sandbox as sandbox
+import sandbox
 
 
 class HPFeedsSink(object):

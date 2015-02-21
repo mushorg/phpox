@@ -26,7 +26,7 @@ from php import utils as php_utils
 def output(s):
     print s
 
-php_utils = php_utils.util_functions()
+php_utils = php_utils.UtilFunctions()
 FUNCTIONS = functions.FUNCTIONS
 
 output("<?php\nif(!extension_loaded('bfr')) {\n\tdl('bfr.so');\n}\n")

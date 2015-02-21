@@ -24,7 +24,10 @@ class Botnet(object):
     """  this class contains irc bot info"""
     def __init__(self, script):
         self.id = ""
-        self.file_name = script.rsplit("/", 1)[1]
+        if '/' in script:
+            self.file_name = script.rsplit("/", 1)[1]
+        else:
+            self.file_name = script
         self.file_md5 = hashlib.md5(open(script).read()).hexdigest()
         self.first_analysis_date = ""
         self.last_analysis_date = ""
@@ -40,24 +43,25 @@ class Botnet(object):
 
     def todict(self):
         botnet_dict = {
-                       'id': self.id,
-                       'file_name': self.file_name,
-                       'file_md5': self.file_md5,
-                       'first_analysis_date': self.first_analysis_date,
-                       'last_analysis_date': self.last_analysis_date,
-                       'irc_addr': self.irc_addr,
-                       'irc_server_pwd': self.irc_server_pwd,
-                       'irc_nick': self.irc_nick,
-                       'irc_user': self.irc_user,
-                       'irc_mode': self.irc_mode,
-                       'irc_channel': self.irc_channel,
-                       'irc_nickserv': self.irc_nickserv,
-                       'irc_notice': self.irc_notice,
-                       'irc_privmsg': self.irc_privmsg
-                       }
+            'id': self.id,
+            'file_name': self.file_name,
+            'file_md5': self.file_md5,
+            'first_analysis_date': self.first_analysis_date,
+            'last_analysis_date': self.last_analysis_date,
+            'irc_addr': self.irc_addr,
+            'irc_server_pwd': self.irc_server_pwd,
+            'irc_nick': self.irc_nick,
+            'irc_user': self.irc_user,
+            'irc_mode': self.irc_mode,
+            'irc_channel': self.irc_channel,
+            'irc_nickserv': self.irc_nickserv,
+            'irc_notice': self.irc_notice,
+            'irc_privmsg': self.irc_privmsg
+        }
         return botnet_dict
 
-    def replace_control(self, s):
+    @classmethod
+    def replace_control(cls, s):
         new_s = ''
         for c in s:
             #replace all control charactors.
@@ -148,7 +152,7 @@ class DataAnalysis(object):
                 print repr(line)
             try:
                 line = line.decode("windows-1252").strip()
-            except(UnicodeDecodeError):
+            except UnicodeDecodeError:
                 continue
             if line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
@@ -161,7 +165,7 @@ class DataAnalysis(object):
             elif line[:4] == "MODE":
                 try:
                     self.botnet.irc_mode = line[5:].split(" ", 1)[1]
-                except(IndexError):
+                except IndexError:
                     continue
             elif line[:4] == "JOIN":
                 self.botnet.irc_channel.append(line[5:])

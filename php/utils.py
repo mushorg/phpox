@@ -22,22 +22,24 @@ import os
 from string import Template
 
 
-class util_functions(object):
-    def __init__(self):
+class UtilFunctions(object):
+    def __init__(self, prefix='php/'):
+        self.prefix = prefix
         self.symbol_table = {}
         #initialed in read_json()
         self.used_name = []
         self.jfile = None
         self.gen_utils_functions()
 
-    def clean(self):
+    @classmethod
+    def clean(cls):
         os.unlink('/tmp/php_utils_table_%d' % os.getpid())
         os.unlink('/tmp/php_utils_scripts_%d' % os.getpid())
 
     def gen_utils_functions(self):
         #xXx it's ULTRA UGLY!!!
         #Because the replacement/xxx.call() is called in very early stage.
-        #Those function codes excute when importing apd_function.py
+        #Those function codes execute when importing apd_function.py
         #Thus I have problem to pass the real symbols into those functions.
         try:
             fd = open('/tmp/php_utils_table_%d' % os.getpid(), 'r')
@@ -74,7 +76,7 @@ class util_functions(object):
             return self.symbol_table[name]
 
     def symbol_append(self, symbol, masq):
-        if(symbol in self.symbol_table):
+        if symbol in self.symbol_table:
             raise BaseException('Name collaps: %s' % symbol)
         self.symbol_table[symbol] = masq
         self.used_name.append(masq)
@@ -86,27 +88,24 @@ class util_functions(object):
             postfix = '' . join(random.choice(
                 (string.ascii_uppercase + string.ascii_lowercase + string.digits))
                 for x in range(5))
-            if((prefix + postfix) not in self.used_name):
+            if prefix + postfix not in self.used_name:
                 ret = (prefix + postfix)
                 break
         return ret
 
     def def_string_parser(self):
         ret = ''
-        replacement = {
-            'simple_code_parser': '',
-            }
+        replacement = dict(simple_code_parser='')
         replacement['simple_code_parser'] = self.generate_random_name()
         self.symbol_append('simple_code_parser', replacement['simple_code_parser'])
         #self.symbol_table['simple_code_parser'] = replacement['simple_code_parser']
-        fd = open("php/string_paser.template")
-        line = ''
-        for l in fd.readlines():
-            line += l
-        fd.close()
+        with open(self.prefix + "string_paser.template") as fd:
+            line = ''
+            for l in fd.readlines():
+                line += l
         t = Template(line)
         ret += t.substitute(replacement)
-        return ret;
+        return ret
 
     def def_multiple_irc(self):
         ret = ''
@@ -127,18 +126,17 @@ class util_functions(object):
         replacement['multiple_irc_return_false'] = self.generate_random_name()
         self.symbol_append('multiple_irc_return_false', replacement['multiple_irc_return_false'])
         replacement['simple_code_parser'] = self.get_symbol('simple_code_parser')
-        fd = open("php/multiple_irc.template")
-        line = ''
-        for l in fd.readlines():
-            line += l
-        fd.close()
+        with open(self.prefix + "multiple_irc.template") as fd:
+            line = ''
+            for l in fd.readlines():
+                line += l
         t = Template(line)
         ret += t.substitute(replacement)
         return ret
 
 #testing program
 if __name__ == "__main__":
-    utils = util_functions()
+    utils = UtilFunctions(prefix='')
     print utils.gen_utils_functions()
     print "%s();" % utils.get_symbol(name='simple_code_parser')
     utils.clean()

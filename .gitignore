@@ -30,3 +30,4 @@ pip-log.txt
 /.project
 /.pydevproject
 /sandbox.cfg
+.idea
