@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2015 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ from php import utils as php_utils
 
 
 def output(s):
-    print s
+    print(s)
 
 php_utils = php_utils.UtilFunctions()
 FUNCTIONS = functions.FUNCTIONS

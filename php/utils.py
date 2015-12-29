@@ -26,7 +26,7 @@ class UtilFunctions(object):
     def __init__(self, prefix='php/'):
         self.prefix = prefix
         self.symbol_table = {}
-        #initialed in read_json()
+        # initialed in read_json()
         self.used_name = []
         self.jfile = None
         self.gen_utils_functions()
@@ -37,10 +37,10 @@ class UtilFunctions(object):
         os.unlink('/tmp/php_utils_scripts_%d' % os.getpid())
 
     def gen_utils_functions(self):
-        #xXx it's ULTRA UGLY!!!
-        #Because the replacement/xxx.call() is called in very early stage.
-        #Those function codes execute when importing apd_function.py
-        #Thus I have problem to pass the real symbols into those functions.
+        # xXx it's ULTRA UGLY!!!
+        # Because the replacement/xxx.call() is called in very early stage.
+        # Those function codes execute when importing apd_function.py
+        # Thus I have problem to pass the real symbols into those functions.
         try:
             fd = open('/tmp/php_utils_table_%d' % os.getpid(), 'r')
             j_code = fd.read()
@@ -98,7 +98,7 @@ class UtilFunctions(object):
         replacement = dict(simple_code_parser='')
         replacement['simple_code_parser'] = self.generate_random_name()
         self.symbol_append('simple_code_parser', replacement['simple_code_parser'])
-        #self.symbol_table['simple_code_parser'] = replacement['simple_code_parser']
+        # self.symbol_table['simple_code_parser'] = replacement['simple_code_parser']
         with open(self.prefix + "string_paser.template") as fd:
             line = ''
             for l in fd.readlines():
@@ -114,7 +114,7 @@ class UtilFunctions(object):
             'parsed_strings': '',
             'find_irc_server': '',
             'multiple_irc_return_false': '',
-            #it should be generated.
+            # it should be generated.
             'simple_code_parser': '',
         }
         replacement['multiple_irc'] = self.generate_random_name()
@@ -134,9 +134,9 @@ class UtilFunctions(object):
         ret += t.substitute(replacement)
         return ret
 
-#testing program
+# testing program
 if __name__ == "__main__":
     utils = UtilFunctions(prefix='')
-    print utils.gen_utils_functions()
-    print "%s();" % utils.get_symbol(name='simple_code_parser')
+    print(utils.gen_utils_functions())
+    print("%s();" % utils.get_symbol(name='simple_code_parser'))
     utils.clean()

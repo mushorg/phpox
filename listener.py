@@ -1,4 +1,4 @@
-# Copyright (C) 2012  Lukas Rist
+# Copyright (C) 2015 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -35,11 +35,11 @@ class FakeListener():
                 msg = ":owner!name@address PRIVMSG " + channel + " :.info\n"
                 socket.send(msg)
             except Exception as e:
-                print "exception message:", e
+                print("exception message: {}".format(e))
             time.sleep(0.1)
 
     def handle(self, socket, address):
-        #pw_list = brute.find_strings()
+        # pw_list = brute.find_strings()
         socket.send(":ircserver NOTICE * :*** SomeString \n")
         socket.send(":ircserver 001 nick :SomeString \n")
         socket.send(":ircserver 004 nick SomeString \n")
@@ -55,4 +55,3 @@ class FakeListener():
 
     def run(self):
         return gevent.spawn(self.server.start)
-

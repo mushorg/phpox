@@ -17,6 +17,7 @@
 
 import hashlib
 import string
+
 from lxml import etree
 
 
@@ -43,20 +44,20 @@ class Botnet(object):
 
     def todict(self):
         botnet_dict = {
-        'id': self.id,
-        'file_name': self.file_name,
-        'file_md5': self.file_md5,
-        'first_analysis_date': self.first_analysis_date,
-        'last_analysis_date': self.last_analysis_date,
-        'irc_addr': self.irc_addr,
-        'irc_server_pwd': self.irc_server_pwd,
-        'irc_nick': self.irc_nick,
-        'irc_user': self.irc_user,
-        'irc_mode': self.irc_mode,
-        'irc_channel': self.irc_channel,
-        'irc_nickserv': self.irc_nickserv,
-        'irc_notice': self.irc_notice,
-'irc_privmsg': self.irc_privmsg
+            'id': self.id,
+            'file_name': self.file_name,
+            'file_md5': self.file_md5,
+            'first_analysis_date': self.first_analysis_date,
+            'last_analysis_date': self.last_analysis_date,
+            'irc_addr': self.irc_addr,
+            'irc_server_pwd': self.irc_server_pwd,
+            'irc_nick': self.irc_nick,
+            'irc_user': self.irc_user,
+            'irc_mode': self.irc_mode,
+            'irc_channel': self.irc_channel,
+            'irc_nickserv': self.irc_nickserv,
+            'irc_notice': self.irc_notice,
+            'irc_privmsg': self.irc_privmsg
         }
         return botnet_dict
 
@@ -65,7 +66,7 @@ class Botnet(object):
         new_s = ''
         for c in s:
             #replace all control charactors.
-            #XXX: this algorithm waste much computational time.
+            # XXX: this algorithm waste much computational time.
             if c in string.printable:
                 new_s += c
             else:
@@ -149,7 +150,7 @@ class DataAnalysis(object):
     def analyze(self, output):
         for line in output.split("\n"):
             if self.debug_level > 0:
-                print repr(line)
+                print(repr(line))
             try:
                 line = line.decode("windows-1252").strip()
             except UnicodeDecodeError:

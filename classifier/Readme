@@ -1,7 +1,0 @@
-The goal of file classifier is to classify malicious scripts into:
-(1)phpecho: php scripts are used to echo strings for testing rfi vulnerability 
-(2)phpdownloading: Download and execute malicious scripts on victims
-(3)phpbot: Victim executes php bot scripts and join C&C server
-(4)phpshell: Hackers can remotely control victims using phpshell
-(5)phpphishing: (not sure) Building up phishing site
-

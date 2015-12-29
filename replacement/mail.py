@@ -15,13 +15,6 @@
 # Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#from email.parser import Parser
-
-#headers = Parser().parsestr('From: <user@example.com>\n'
-        #'To: <someone_else@example.com>\n'
-        #'Subject: Test message\n'
-        #'Message: Send Successfully\n')
-
 
 def call():
     function = """
@@ -29,4 +22,3 @@ def call():
     \t\treturn $function_name;
     """
     return function
-#print call()

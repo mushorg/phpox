@@ -16,7 +16,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from string import Template
-from php import utils as php_utils 
 import random
 
 
@@ -86,10 +85,11 @@ ${user_in_passwd}:x:10003:1::/home/${user_in_passwd}:/bin/sh\n', );
 }
    """)
     parameter_dict = {
-         "manufacturer" : ["TI", "Lukas Corp", "Spots Garage"],
-         "user_in_passwd" : ["john", "admin", "peter"],
-         }
-    ret_string = function.substitute(manufacturer=random.choice(parameter_dict['manufacturer']),
-       user_in_passwd=random.choice(parameter_dict['user_in_passwd'])
-       )
+        "manufacturer": ["TI", "Lukas Corp", "Spots Garage"],
+        "user_in_passwd": ["john", "admin", "peter"],
+    }
+    ret_string = function.substitute(
+        manufacturer=random.choice(parameter_dict['manufacturer']),
+        user_in_passwd=random.choice(parameter_dict['user_in_passwd'])
+    )
     return ret_string

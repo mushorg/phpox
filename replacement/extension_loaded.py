@@ -24,4 +24,4 @@ def call():
     \t\treturn $function_name($name);
     \t}"""
     return function
-#print call()
+# print call()
