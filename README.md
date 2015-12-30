@@ -2,13 +2,13 @@
 
 ## Requirements
 
-`# apt-get install python2.7 git python-lxml make`
+`# apt install python3 git make`
 
 ## Code
 
 Get the source:
 
-`# git clone git@github.com:glastopf/phpox.git`
+`# git clone https://github.com/mushorg/phpox.git`
 
 Create the the sandbox PHP file
 
@@ -16,4 +16,4 @@ Create the the sandbox PHP file
 
 ## BFR
 
-Follow the [BFR](https://github.com/glastopf/BFR) documentation
+Follow the [BFR](https://github.com/mushorg/BFR) documentation
