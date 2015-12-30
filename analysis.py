@@ -16,9 +16,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import hashlib
-import string
-
-from lxml import etree
 
 
 class Botnet(object):
@@ -60,85 +57,6 @@ class Botnet(object):
             'irc_privmsg': self.irc_privmsg
         }
         return botnet_dict
-
-    @classmethod
-    def replace_control(cls, s):
-        new_s = ''
-        for c in s:
-            #replace all control charactors.
-            # XXX: this algorithm waste much computational time.
-            if c in string.printable:
-                new_s += c
-            else:
-                new_s += '\\%X' % ord(c)
-        return new_s
-
-    def toxml(self):
-        xml = etree.Element('xml')
-        first_analysis_date = etree.Element('first_analysis_date')
-        xml.append(first_analysis_date)
-        first_analysis_date.text = self.first_analysis_date
-        last_analysis_date = etree.Element('last_analysis_date')
-        xml.append(last_analysis_date)
-        last_analysis_date.text = self.last_analysis_date
-        file_md5 = etree.Element('file_md5')
-        xml.append(file_md5)
-        file_md5.text = self.file_md5
-        bot = etree.Element('bot')
-        xml.append(bot)
-        host = etree.Element('host')
-        bot.append(host)
-        if len(self.irc_addr) > 0:
-            host.text = self.irc_addr
-        irc_server_pwd = etree.Element('irc_server_pwd')
-        bot.append(irc_server_pwd)
-        if len(self.irc_server_pwd) > 0:
-            irc_server_pwd.text = etree.CDATA(self.irc_server_pwd)
-        irc_nick = etree.Element('irc_nick')
-        bot.append(irc_nick)
-        if len(self.irc_nick) > 0:
-            irc_nick.text = etree.CDATA(self.irc_nick)
-        irc_user = etree.Element('irc_user')
-        bot.append(irc_user)
-        if len(self.irc_user) > 0:
-            irc_user.text = self.irc_user
-        irc_mode = etree.Element('irc_mode')
-        bot.append(irc_mode)
-        if len(self.irc_mode) > 0:
-            irc_mode.text = self.irc_mode
-        irc_nickserv = etree.Element('irc_nickserv')
-        bot.append(irc_nickserv)
-        if len(self.irc_nickserv) > 0:
-            irc_nickserv.text = etree.CDATA(irc_nickserv)
-        irc_channels = etree.Element('irc_channels')
-        bot.append(irc_channels)
-        if len(self.irc_channel) > 0:
-            for i in self.irc_channel:
-                irc_channel = etree.Element('irc_channel')
-                irc_channels.append(irc_channel)
-                irc_channel.text = self.replace_control(i)
-        else:
-            irc_channels.append(etree.Element('irc_channel'))
-        irc_notices = etree.Element('irc_notices')
-        bot.append(irc_notices)
-        if len(self.irc_notice) > 0:
-            for i in self.irc_notice:
-                irc_notice = etree.Element('irc_notice')
-                irc_notices.append(irc_notice)
-                irc_notice.text = i
-        else:
-            irc_notices.append(etree.Element('irc_notice'))
-        irc_privmsgs = etree.Element('irc_privmsgs')
-        bot.append(irc_privmsgs)
-        if len(self.irc_privmsg) > 0:
-            for i in self.irc_privmsg:
-                irc_privmsg = etree.Element('irc_privmsg')
-                irc_privmsgs.append(irc_privmsg)
-                irc_privmsg.text = etree.CDATA(self.replace_control(i))
-        else:
-            irc_privmsgs.append(etree.Element('irc_privmsg'))
-        return etree.tostring(xml, encoding="UTF-8",
-                              method='xml', xml_declaration=True)
 
 
 class DataAnalysis(object):
