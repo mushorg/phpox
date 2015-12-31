@@ -55,3 +55,8 @@ class FakeListener():
 
     def run(self):
         return gevent.spawn(self.server.start)
+
+
+if __name__ == '__main__':
+    listener = FakeListener()
+    listener.server.serve_forever()
