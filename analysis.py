@@ -26,7 +26,7 @@ class Botnet(object):
             self.file_name = script.rsplit("/", 1)[1]
         else:
             self.file_name = script
-        self.file_md5 = hashlib.md5(open(script).read()).hexdigest()
+        self.file_md5 = hashlib.md5(open(script).read().encode('utf-8')).hexdigest()
         self.first_analysis_date = ""
         self.last_analysis_date = ""
         self.irc_addr = ""
@@ -66,13 +66,10 @@ class DataAnalysis(object):
         self.debug_level = debug
 
     def analyze(self, output):
+        output = output.decode('utf-8')
         for line in output.split("\n"):
             if self.debug_level > 0:
                 print(repr(line))
-            try:
-                line = line.decode("windows-1252").strip()
-            except UnicodeDecodeError:
-                continue
             if line[:4] == "ADDR":
                 self.botnet.irc_addr = line[5:]
             elif line[:4] == "PASS":
