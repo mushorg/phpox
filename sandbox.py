@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2015 Lukas Rist
+# Copyright (C) 2016 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import os
+import json
 import asyncio
+from aiohttp import web
 from asyncio.subprocess import PIPE
 
 from pprint import pprint
@@ -72,15 +74,15 @@ class PHPSandbox(object):
 
         print("Sandbox running...")
         analyzer = analysis.DataAnalysis(script)
-        botnet = analyzer.analyze(self.stdout_value)
+        self.botnet = analyzer.analyze(self.stdout_value)
         print("Parsed with sandbox")
-        pprint(botnet.todict())
-        return botnet
+        pprint(self.botnet.todict())
+        return self.botnet
 
 
 class EchoServer(asyncio.Protocol):
     def connection_made(self, transport):
-        peername = transport.get_extra_info('peername')
+        # peername = transport.get_extra_info('peername')
         # print('connection from {}'.format(peername))
         self.transport = transport
 
@@ -88,19 +90,35 @@ class EchoServer(asyncio.Protocol):
         # print('data received: {}'.format(data.decode()))
         self.transport.write(data)
 
-    def connection_lost(self, exc):
-        server.close()
 
-
-if __name__ == '__main__':
-    DEBUG_LEVEL = 1
-    sb = PHPSandbox(debug_level=DEBUG_LEVEL)
-    loop = asyncio.get_event_loop()
+@asyncio.coroutine
+def api(request):
+    sb = PHPSandbox()
     try:
-        server = loop.run_until_complete(loop.create_server(EchoServer, '127.0.0.1', 1234))
-        fut = asyncio.wait_for(sb.sandbox('bot.php'), timeout=10)
-        loop.run_until_complete(fut)
+        server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
+        yield from asyncio.wait_for(sb.sandbox('bot.php'), timeout=10)
         server.close()
     except KeyboardInterrupt:
         pass
+    return web.Response(body=json.dumps(sb.botnet.todict(), sort_keys=True, indent=4).encode('utf-8'))
+
+
+if __name__ == '__main__':
+    app = web.Application()
+    app.router.add_route('GET', '/', api)
+
+    loop = asyncio.get_event_loop()
+    handler = app.make_handler()
+    f = loop.create_server(handler, '0.0.0.0', 8080)
+    srv = loop.run_until_complete(f)
+    print('serving on', srv.sockets[0].getsockname())
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.run_until_complete(handler.finish_connections(1.0))
+        srv.close()
+        loop.run_until_complete(srv.wait_closed())
+        loop.run_until_complete(app.finish())
     loop.close()
