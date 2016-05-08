@@ -18,6 +18,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import os
+import tempfile
 import json
 import asyncio
 from aiohttp import web
@@ -57,8 +58,7 @@ class PHPSandbox(object):
     def sandbox(self, script):
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
-        # self.fake_listener = listener.FakeListener()
-        # self.greenlet = self.fake_listener.run()
+
         try:
             cmd = ["php5", self.pre + "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
@@ -72,7 +72,6 @@ class PHPSandbox(object):
             print("Error executing the sandbox: {}".format(e))
             # raise e
 
-        print("Sandbox running...")
         analyzer = analysis.DataAnalysis(script)
         self.botnet = analyzer.analyze(self.stdout_value)
         print("Parsed with sandbox")
@@ -93,19 +92,23 @@ class EchoServer(asyncio.Protocol):
 
 @asyncio.coroutine
 def api(request):
-    sb = PHPSandbox()
-    try:
-        server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
-        yield from asyncio.wait_for(sb.sandbox('bot.php'), timeout=10)
-        server.close()
-    except KeyboardInterrupt:
-        pass
-    return web.Response(body=json.dumps(sb.botnet.todict(), sort_keys=True, indent=4).encode('utf-8'))
+    data = yield from request.payload.read()
+    with tempfile.NamedTemporaryFile(suffix='.php') as f:
+        f.write(data)
+        f.seek(0)
+        sb = PHPSandbox()
+        try:
+            server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
+            yield from asyncio.wait_for(sb.sandbox(f.name), timeout=10)
+            server.close()
+        except KeyboardInterrupt:
+            pass
+        return web.Response(body=json.dumps(sb.botnet.todict(), sort_keys=True, indent=4).encode('utf-8'))
 
 
 if __name__ == '__main__':
     app = web.Application()
-    app.router.add_route('GET', '/', api)
+    app.router.add_route('POST', '/', api)
 
     loop = asyncio.get_event_loop()
     handler = app.make_handler()
