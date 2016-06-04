@@ -33,7 +33,6 @@ output("<?php\nif(!extension_loaded('bfr')) {\n\tdl('bfr.so');\n}\n")
 output("error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);\n\n")
 output(php_utils.gen_utils_functions())
 output(shell_sandbox.shell_sandbox())
-int_name = 0
 for function, return_val in FUNCTIONS.items():
     parts = function.split(";")
     function_name = parts[0]
@@ -49,8 +48,6 @@ for function, return_val in FUNCTIONS.items():
         return_val = "\treturn;"
     output(return_val)
     output("}")
-    output("rename_function('__overridden__', '%s');\n" % int_name)
-    int_name += 1
 
 find_irc_server = php_utils.get_symbol('find_irc_server')
 output("%s($argv[1]);\n" % find_irc_server)
