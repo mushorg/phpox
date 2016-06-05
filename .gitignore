@@ -4,6 +4,8 @@ __pycache__
 *.pyc
 
 # PHP files
-sandbox.php
 test.php
 bot.php
+samples
+
+sandbox.php

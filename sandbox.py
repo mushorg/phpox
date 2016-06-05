@@ -21,19 +21,15 @@ import os
 import tempfile
 import json
 import asyncio
+import hashlib
+
 from aiohttp import web
 from asyncio.subprocess import PIPE
 
 from pprint import pprint
 
-import analysis
-
 
 class PHPSandbox(object):
-
-    def __init__(self, pre=os.getcwd() + '/', debug_level=0):
-        self.pre = pre
-
     @classmethod
     def php_tag_check(cls, script):
         with open(script, "r+") as check_file:
@@ -52,7 +48,7 @@ class PHPSandbox(object):
             if not line:
                 break
             else:
-                self.stdout_value += line
+                self.stdout_value += line + b'\n'
 
     @asyncio.coroutine
     def sandbox(self, script):
@@ -60,7 +56,7 @@ class PHPSandbox(object):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
-            cmd = ["php5", self.pre + "sandbox.php", script]
+            cmd = ["php7.0", "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
             self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
@@ -71,12 +67,7 @@ class PHPSandbox(object):
                 pass
             print("Error executing the sandbox: {}".format(e))
             # raise e
-
-        analyzer = analysis.DataAnalysis(script)
-        self.botnet = analyzer.analyze(self.stdout_value)
-        print("Parsed with sandbox")
-        pprint(self.botnet.todict())
-        return self.botnet
+        return {'stdout': self.stdout_value.decode('utf-8')}
 
 
 class EchoServer(asyncio.Protocol):
@@ -93,17 +84,19 @@ class EchoServer(asyncio.Protocol):
 @asyncio.coroutine
 def api(request):
     data = yield from request.payload.read()
+    file_md5 = hashlib.md5(data).hexdigest()
     with tempfile.NamedTemporaryFile(suffix='.php') as f:
         f.write(data)
         f.seek(0)
         sb = PHPSandbox()
         try:
             server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
-            yield from asyncio.wait_for(sb.sandbox(f.name), timeout=10)
+            ret = yield from asyncio.wait_for(sb.sandbox(f.name), timeout=10)
             server.close()
         except KeyboardInterrupt:
             pass
-        return web.Response(body=json.dumps(sb.botnet.todict(), sort_keys=True, indent=4).encode('utf-8'))
+        ret['file_md5'] = file_md5
+        return web.Response(body=json.dumps(ret, sort_keys=True, indent=4).encode('utf-8'))
 
 
 if __name__ == '__main__':
