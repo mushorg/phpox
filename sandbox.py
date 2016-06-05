@@ -56,7 +56,7 @@ class PHPSandbox(object):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
-            cmd = ["php7.0", "sandbox.php", script]
+            cmd = ["php7", "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
             self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
     handler = app.make_handler()
-    f = loop.create_server(handler, '0.0.0.0', 8080)
+    f = loop.create_server(handler, '172.0.0.1', 8080)
     srv = loop.run_until_complete(f)
     print('serving on', srv.sockets[0].getsockname())
     try:
