@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
     handler = app.make_handler()
-    f = loop.create_server(handler, '172.0.0.1', 8088)
+    f = loop.create_server(handler, '127.0.0.1', 8088)
     srv = loop.run_until_complete(f)
     print('serving on', srv.sockets[0].getsockname())
     try:
