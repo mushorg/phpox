@@ -83,7 +83,7 @@ class EchoServer(asyncio.Protocol):
 
 @asyncio.coroutine
 def api(request):
-    data = yield from request.payload.read()
+    data = yield from request.read()
     file_md5 = hashlib.md5(data).hexdigest()
     with tempfile.NamedTemporaryFile(suffix='.php') as f:
         f.write(data)
