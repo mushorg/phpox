@@ -56,7 +56,7 @@ class PHPSandbox(object):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
-            cmd = ["php7", "sandbox.php", script]
+            cmd = [phpver, "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
             self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
@@ -100,6 +100,8 @@ def api(request):
 
 
 if __name__ == '__main__':
+    phpver = "php7.0"
+
     app = web.Application()
     app.router.add_route('POST', '/', api)
 
