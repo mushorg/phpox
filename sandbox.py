@@ -22,12 +22,12 @@ import tempfile
 import json
 import asyncio
 import hashlib
+import argparse
 
 from aiohttp import web
 from asyncio.subprocess import PIPE
 
 from pprint import pprint
-
 
 class PHPSandbox(object):
     @classmethod
@@ -56,7 +56,7 @@ class PHPSandbox(object):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
-            cmd = [phpver, "sandbox.php", script]
+            cmd = [phpbin, "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
             self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
@@ -100,7 +100,9 @@ def api(request):
 
 
 if __name__ == '__main__':
-    phpver = "php7.0"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", required=True)
+    phpbin = parser.parse_args()
 
     app = web.Application()
     app.router.add_route('POST', '/', api)
