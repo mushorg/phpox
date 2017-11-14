@@ -91,7 +91,7 @@ def api(request):
         sb = PHPSandbox()
         try:
             server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
-            ret = yield from asyncio.wait_for(sb.sandbox(f.name), timeout=10)
+            ret = yield from asyncio.wait_for(sb.sandbox(f.name, phpbin), timeout=10)
             server.close()
         except KeyboardInterrupt:
             pass
@@ -102,7 +102,8 @@ def api(request):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", default="php7.0")
-    phpbin = parser.parse_args()
+    args = parser.parse_args()
+    phpbin = args.phpbin
 
     app = web.Application()
     app.router.add_route('POST', '/', api)
