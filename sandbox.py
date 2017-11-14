@@ -51,7 +51,7 @@ class PHPSandbox(object):
                 self.stdout_value += line + b'\n'
 
     @asyncio.coroutine
-    def sandbox(self, script):
+    def sandbox(self, script, phpbin):
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
 
@@ -101,7 +101,7 @@ def api(request):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", required=True)
+    parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", default="php7.0")
     phpbin = parser.parse_args()
 
     app = web.Application()
