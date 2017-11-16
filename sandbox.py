@@ -51,7 +51,7 @@ class PHPSandbox(object):
                 self.stdout_value += line + b'\n'
 
     @asyncio.coroutine
-    def sandbox(self, script, phpbin):
+    def sandbox(self, script, phpbin="php7.0"):
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
 
