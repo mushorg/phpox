@@ -22,12 +22,12 @@ import tempfile
 import json
 import asyncio
 import hashlib
+import argparse
 
 from aiohttp import web
 from asyncio.subprocess import PIPE
 
 from pprint import pprint
-
 
 class PHPSandbox(object):
     @classmethod
@@ -51,12 +51,12 @@ class PHPSandbox(object):
                 self.stdout_value += line + b'\n'
 
     @asyncio.coroutine
-    def sandbox(self, script):
+    def sandbox(self, script, phpbin="php7.0"):
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
-            cmd = ["php7", "sandbox.php", script]
+            cmd = [phpbin, "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
             self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
@@ -91,7 +91,7 @@ def api(request):
         sb = PHPSandbox()
         try:
             server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
-            ret = yield from asyncio.wait_for(sb.sandbox(f.name), timeout=10)
+            ret = yield from asyncio.wait_for(sb.sandbox(f.name, phpbin), timeout=10)
             server.close()
         except KeyboardInterrupt:
             pass
@@ -100,6 +100,11 @@ def api(request):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", default="php7.0")
+    args = parser.parse_args()
+    phpbin = args.phpbin
+
     app = web.Application()
     app.router.add_route('POST', '/', api)
 
