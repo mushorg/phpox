@@ -53,13 +53,13 @@ class PHPSandbox(object):
 
     @asyncio.coroutine
     def sandbox(self, script, phpbin="php7.0"):
+        self.stdout_value = b''
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
 
         try:
             cmd = [phpbin, "sandbox.php", script]
             self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
-            self.stdout_value = b''
             yield from asyncio.wait_for(self.read_process(), timeout=3)
         except Exception as e:
             try:
