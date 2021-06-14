@@ -28,7 +28,6 @@ import functools
 from aiohttp import web
 from asyncio.subprocess import PIPE
 
-from pprint import pprint
 
 class PHPSandbox(object):
     @classmethod
@@ -49,11 +48,11 @@ class PHPSandbox(object):
             if not line:
                 break
             else:
-                self.stdout_value += line + b'\n'
+                self.stdout_value += line + b"\n"
 
     @asyncio.coroutine
     def sandbox(self, script, phpbin="php7.0"):
-        self.stdout_value = b''
+        self.stdout_value = b""
         if not os.path.isfile(script):
             raise Exception("Sample not found: {0}".format(script))
 
@@ -68,7 +67,7 @@ class PHPSandbox(object):
                 pass
             print("Error executing the sandbox: {}".format(e))
             # raise e
-        return {'stdout': self.stdout_value.decode('utf-8')}
+        return {"stdout": self.stdout_value.decode("utf-8")}
 
 
 class EchoServer(asyncio.Protocol):
@@ -81,40 +80,42 @@ class EchoServer(asyncio.Protocol):
         # print('data received: {}'.format(data.decode()))
         self.transport.write(data)
 
+
 _pretty_dumps = functools.partial(json.dumps, sort_keys=True, indent=4)
+
 
 @asyncio.coroutine
 def api(request):
     data = yield from request.read()
     file_md5 = hashlib.md5(data).hexdigest()
-    with tempfile.NamedTemporaryFile(suffix='.php') as f:
+    with tempfile.NamedTemporaryFile(suffix=".php") as f:
         f.write(data)
         f.seek(0)
         sb = PHPSandbox()
         try:
-            server = yield from loop.create_server(EchoServer, '127.0.0.1', 1234)
+            server = yield from loop.create_server(EchoServer, "127.0.0.1", 1234)
             ret = yield from asyncio.wait_for(sb.sandbox(f.name, phpbin), timeout=10)
             server.close()
         except KeyboardInterrupt:
             pass
-        ret['file_md5'] = file_md5
+        ret["file_md5"] = file_md5
         return web.json_response(ret, dumps=_pretty_dumps)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", default="php7.0")
     args = parser.parse_args()
     phpbin = args.phpbin
 
     app = web.Application()
-    app.router.add_route('POST', '/', api)
+    app.router.add_route("POST", "/", api)
 
     loop = asyncio.get_event_loop()
     handler = app.make_handler()
-    f = loop.create_server(handler, '127.0.0.1', 8088)
+    f = loop.create_server(handler, "127.0.0.1", 8088)
     srv = loop.run_until_complete(f)
-    print('serving on', srv.sockets[0].getsockname())
+    print("serving on", srv.sockets[0].getsockname())
     try:
         loop.run_forever()
     except KeyboardInterrupt:

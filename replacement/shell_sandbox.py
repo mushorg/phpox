@@ -20,7 +20,8 @@ import random
 
 
 def shell_sandbox():
-    function = Template("""
+    function = Template(
+        """
 function shell_sandbox($$cmd){
  $$ret = array('None',);
  $$parts = explode(';', $$cmd);
@@ -83,13 +84,14 @@ ${user_in_passwd}:x:10003:1::/home/${user_in_passwd}:/bin/sh\n', );
  }
  return $$ret;
 }
-   """)
+   """
+    )
     parameter_dict = {
         "manufacturer": ["TI", "Lukas Corp", "Spots Garage"],
         "user_in_passwd": ["john", "admin", "peter"],
     }
     ret_string = function.substitute(
-        manufacturer=random.choice(parameter_dict['manufacturer']),
-        user_in_passwd=random.choice(parameter_dict['user_in_passwd'])
+        manufacturer=random.choice(parameter_dict["manufacturer"]),
+        user_in_passwd=random.choice(parameter_dict["user_in_passwd"]),
     )
     return ret_string

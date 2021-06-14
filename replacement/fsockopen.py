@@ -21,8 +21,9 @@ from string import Template
 
 def call():
     utils = php_utils.UtilFunctions()
-    multiple_irc_return_false = utils.get_symbol('multiple_irc_return_false')
-    template = Template("""\techo "\\nADDR " . $$hostname . ':' . $$port . "\\n";
+    multiple_irc_return_false = utils.get_symbol("multiple_irc_return_false")
+    template = Template(
+        """\techo "\\nADDR " . $$hostname . ':' . $$port . "\\n";
 \t$$multiple_irc_return_false = "${multiple_irc_return_false}";
 \tif($$multiple_irc_return_false()){
 \t\tif(rand(0,1) == 0){
@@ -32,6 +33,7 @@ def call():
 \t}
 \t$$function_name = "fsockopen" . "_" . $$rand;
 \t$$sock = $$function_name('127.0.0.1', 1234);
-\treturn $$sock;""")
+\treturn $$sock;"""
+    )
     function = template.substitute(multiple_irc_return_false=multiple_irc_return_false)
     return function

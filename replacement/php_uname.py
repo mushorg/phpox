@@ -45,9 +45,11 @@ def call():
     kernel = choice(kernel_version)
     operating = choice(operating_system)
     # if name = ubuntu, we add '-generic' right after version number
-    if 'Ubuntu' in name:
+    if "Ubuntu" in name:
         number = number + "-generic"
     ret = """
     \treturn 'Linux {0} {1} {2}-{3} SMP {4} {5} {6}';
-    """.format(hostname, number, version_choice, name, date, kernel, operating)
+    """.format(
+        hostname, number, version_choice, name, date, kernel, operating
+    )
     return ret
