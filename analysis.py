@@ -19,7 +19,7 @@ import hashlib
 
 
 class Botnet(object):
-    """  this class contains irc bot info"""
+    """this class contains irc bot info"""
 
     def __init__(self, script):
         self.id = ""

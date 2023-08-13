@@ -15,7 +15,16 @@
 # Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from replacement import execute, shell_exec, system, passthru, popen, getenv, ini_get, fsockopen
+from replacement import (
+    execute,
+    shell_exec,
+    system,
+    passthru,
+    popen,
+    getenv,
+    ini_get,
+    fsockopen,
+)
 from replacement import fgets, php_uname, extension_loaded, dl, mail, function_exists
 import random
 
