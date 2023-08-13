@@ -13,7 +13,7 @@ function $simple_code_parser($$src_file){
 
 	$$state = 0;
 	#target: parse all strings
-	$$lines = join( file($$src_file), "");
+	$$lines = file_get_contents($$src_file);
 	$$tokens = token_get_all($$lines);
 
 	foreach($$tokens as $$token){

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2016 Lukas Rist
+# Copyright (C) 2023 Lukas Rist
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,14 +19,10 @@
 
 import os
 import tempfile
-import json
 import asyncio
 import hashlib
-import argparse
-import functools
 
 from aiohttp import web
-from asyncio.subprocess import PIPE
 
 
 class PHPSandbox(object):
@@ -41,25 +37,16 @@ class PHPSandbox(object):
             check_file.write(file_content)
         return script
 
-    @asyncio.coroutine
-    def read_process(self):
-        while True:
-            line = yield from self.proc.stdout.readline()
-            if not line:
-                break
-            else:
-                self.stdout_value += line + b"\n"
 
-    @asyncio.coroutine
-    def sandbox(self, script, phpbin="php7.0"):
+    async def sandbox(self, script, phpbin="php8.1"):
         self.stdout_value = b""
         if not os.path.isfile(script):
-            raise Exception("Sample not found: {0}".format(script))
-
+            raise Exception("sample not found: {0}".format(script))
         try:
             cmd = [phpbin, "sandbox.php", script]
-            self.proc = yield from asyncio.create_subprocess_exec(*cmd, stdout=PIPE)
-            yield from asyncio.wait_for(self.read_process(), timeout=3)
+            self.proc = await asyncio.create_subprocess_exec(*cmd, stdout=asyncio.subprocess.PIPE)
+            stdout, _ = await asyncio.wait_for(self.proc.communicate(), timeout=3)
+            self.stdout_value = stdout.decode()
         except Exception as e:
             try:
                 self.proc.kill()
@@ -67,62 +54,36 @@ class PHPSandbox(object):
                 pass
             print("Error executing the sandbox: {}".format(e))
             # raise e
-        return {"stdout": self.stdout_value.decode("utf-8")}
+        return {"stdout": self.stdout_value}
 
 
 class EchoServer(asyncio.Protocol):
     def connection_made(self, transport):
-        # peername = transport.get_extra_info('peername')
-        # print('connection from {}'.format(peername))
         self.transport = transport
 
     def data_received(self, data):
-        # print('data received: {}'.format(data.decode()))
         self.transport.write(data)
 
 
-_pretty_dumps = functools.partial(json.dumps, sort_keys=True, indent=4)
-
-
-@asyncio.coroutine
-def api(request):
-    data = yield from request.read()
+async def api(request):
+    files = await request.post()
+    data = files['file'].file.read()
     file_md5 = hashlib.md5(data).hexdigest()
     with tempfile.NamedTemporaryFile(suffix=".php") as f:
         f.write(data)
         f.seek(0)
         sb = PHPSandbox()
         try:
-            server = yield from loop.create_server(EchoServer, "127.0.0.1", 1234)
-            ret = yield from asyncio.wait_for(sb.sandbox(f.name, phpbin), timeout=10)
+            server = await asyncio.get_event_loop().create_server(EchoServer, "127.0.0.1", 1234)
+            ret = await asyncio.wait_for(sb.sandbox(f.name, "php8.1"), timeout=10)
             server.close()
         except KeyboardInterrupt:
             pass
         ret["file_md5"] = file_md5
-        return web.json_response(ret, dumps=_pretty_dumps)
+        return web.json_response(ret)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--phpbin", help="PHP binary, ex: php7.0", default="php7.0")
-    args = parser.parse_args()
-    phpbin = args.phpbin
-
+if __name__ == '__main__':
     app = web.Application()
-    app.router.add_route("POST", "/", api)
-
-    loop = asyncio.get_event_loop()
-    handler = app.make_handler()
-    f = loop.create_server(handler, "127.0.0.1", 8088)
-    srv = loop.run_until_complete(f)
-    print("serving on", srv.sockets[0].getsockname())
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.run_until_complete(handler.finish_connections(1.0))
-        srv.close()
-        loop.run_until_complete(srv.wait_closed())
-        loop.run_until_complete(app.finish())
-    loop.close()
+    app.add_routes([web.post('/', api)])
+    web.run_app(app, host='127.0.0.1', port=8088, reuse_port=True)

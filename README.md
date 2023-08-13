@@ -17,3 +17,9 @@ Create the the sandbox PHP file
 ## BFR
 
 Follow the [BFR](https://github.com/mushorg/BFR) documentation
+
+## Running
+
+```
+python3 sandbox.py
+```
